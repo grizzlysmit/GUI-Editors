@@ -1,6 +1,6 @@
 unit module GUI::Editors:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
-=begin top-comment
+=begin top
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit
@@ -13,7 +13,7 @@ unit module GUI::Editors:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@smit.
 
 A module for managing the users GUI Editor preferences in a variety of programs. 
 
-=end top-comment
+=end top
 
 use Terminal::ANSI::OO :t;
 use Terminal::Width;
