@@ -1,16 +1,13 @@
 unit module GUI::Editors:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
 
-=begin head1
+=begin top-comment
 
-GUI::Editors
+=head1 GUI::Editors
 
-=end head1
-
-=begin Heading
 
 A module for managing the users GUI Editor preferences in a variety of programs. 
 
-=end Heading
+=end top-comment
 
 use Terminal::ANSI::OO :t;
 use Terminal::Width;
