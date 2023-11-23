@@ -1,9 +1,9 @@
-unit module GUI::Editors:ver<0.1.0>:auth<Francis Grizzly Smit (grizzlysmit@smit.id.au)>;
+unit module GUI::Editors:ver<0.1.0>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
 
 =begin top
 
 =NAME GUI::Editors 
-=AUTHOR Francis Grizzly Smit
+=AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
 =VERSION v.0.1.0
 =TITLE GUI::Editors
 =SUBTITLE A module for managing a raku programs GUI Editor preffferences.
