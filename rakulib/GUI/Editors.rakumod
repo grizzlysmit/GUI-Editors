@@ -2,6 +2,22 @@ unit module GUI::Editors:ver<0.1.0>:auth<Francis Grizzly Smit (grizzly@smit.id.a
 
 =begin pod
 
+=head1 GUI::Editors
+
+=begin head2
+
+Table of Contents
+
+=end head2
+
+=item1 L<NAME|#name>
+=item1 L<AUTHOR|#author>
+=item1 L<VERSION|#version>
+=item1 L<TITLE|#title>
+=item1 L<SUBTITLE|#subtitle>
+=item1 L<COPYRIGHT|#copyright>
+=item1 L<Introduction|#introduction>
+
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
 =VERSION 0.1.0
@@ -9,7 +25,7 @@ unit module GUI::Editors:ver<0.1.0>:auth<Francis Grizzly Smit (grizzly@smit.id.a
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
 
-=head1 GUI::Editors
+=head1 Introduction
 
 A Raku module for managing the users GUI Editor preferences in a variety of programs. 
 
@@ -157,8 +173,14 @@ grammar Editors is export {
     regex path                { <lead-in>  <path-segments>? }
     regex lead-in             { [ '/' | '~' | '~/' ] }
     regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
-    regex path-segment        { \w+ [ [ '-' || \h || '+' || ':' || '@' || '=' || '!' || ',' || '&' || '&' || '%' || '.' ]+ \w* ]* }
-    regex editor-name         { \w+ [ [ '-' || '+' || ':' || '@' || '=' || '!' || ',' || '&' || '&' || '%' || '.' ]+ \w* ]* }
+    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
+    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
+    token start-other-stuff   { \w+ }
+    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
+    token tails-tail          { \w+ }
+    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
+    token editor-name         { <with-other-stuff> }
 }
 
 class EditorsActions is export {
@@ -170,17 +192,57 @@ class EditorsActions is export {
         my %comln = type => 'comment-line', value => ~$/;
         make %comln;
     }
+    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
+    method other-stuff($/) {
+        my $other-stuff = ~$/;
+        make $other-stuff;
+    }
+    #token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
+    method with-other-stuff($/) {
+        my @tailotherstuff;
+        if $/<tail-other-stuff> {
+            @tailotherstuff = $/<tail-other-stuff>».made;
+        }
+        my $with-other-stuff = $/<start-other-stuff>.made ~ @tailotherstuff.join();
+        make $with-other-stuff;
+    }
+    #token editor-name         { <with-other-stuff> }
     method editor-name($/) {
-        my $edname = ~$/;
+        my $edname = $/<with-other-stuff>.made;
         make $edname;
     }
     method lead-in($/) {
         my $leadin = ~$/;
         make $leadin;
     }
+    #token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    method with-space-in-it($/) {
+        my $with-space-in-it = ~$/;
+        make $with-space-in-it;
+    }
+    #token start-other-stuff   { \w+ }
+    method start-other-stuff($/) {
+        my $start-other-stuff = ~$/;
+        make $start-other-stuff;
+    }
+    #token tails-tail          { \w+ }
+    method tails-tail($/) {
+        my $tails-tail = ~$/;
+        make $tails-tail;
+    }
+    #token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
+    method tail-other-stuff($/) {
+        my @otherstuff = $/<other-stuff>».made;
+        my $tail-other-stuff = @otherstuff.join();
+        if $/<tails-tail> {
+            $tail-other-stuff ~= $<tails-tail>.made;
+        }
+        make $tail-other-stuff;
+    }
+    #token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
     method path-segment($/) {
-        my $ps = ~$/;
-        make $ps;
+        my $path-segment = ~$/;
+        make $path-segment;
     }
     method path-segments($/) {
         my @path-seg = $/<path-segment>».made;
@@ -220,7 +282,7 @@ class EditorsActions is export {
         make %editor-to-use;
     }
     method override-gui_editor($/) {
-        my %override-gui_editor = type => 'override-gui_editor', value => True;
+        my %override-gui_editor = type => 'override-gui_editor', :value;
         if $/<comment> {
             my $com = $/<comment>.made;
             %override-gui_editor«comment» = $com;
@@ -321,7 +383,8 @@ sub edit-configs() returns Bool:D is export {
     }
 }
 
-sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D), &check:(Str:D @cl-cfg, Str:D $cl-cfg --> Bool:D) --> Bool:D) is  export {
+sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D),
+                                                            &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is  export {
     @config-files.append(|@client-config-files);
     $client-config = $client-config-path;
     &generate-local-configs = &gen-configs;
@@ -525,7 +588,6 @@ sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
 sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
     $colour = True if $syntax;
     my Int:D $cnt = 0;
-    my Str:D $mark = '';
     my %editors = '%*ENV«GUI_EDITOR»' => $GUI_EDITOR,
                   '%*ENV<VISUAL>' => $VISUAL,
                   '%*ENV<EDITOR>' => $EDITOR,
@@ -545,16 +607,14 @@ sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
     my Int:D $width = $var-width + $value-width + 4;
     if $colour {
         if $syntax {
-            my $actions = VariablesActions;
-            my $v-actions = ValueActions;
             put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s => %-*s", $var-width, 'variable', $value-width, 'value') ~ t.text-reset;
             $cnt++;
             put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s", $width, '#' x $width) ~ t.text-reset;
             $cnt++;
             for %editors.keys.sort -> $var {
                 my $value = %editors{$var};
-                my $highlightedvar = Variables.parse($var, :enc('UTF-8'), :$actions).made;
-                my $highlightedvalue = Value.parse($value, :enc('UTF-8'), :actions($v-actions)).made;
+                my $highlightedvar   = highlight-var($var);
+                my $highlightedvalue = highlight-val($value);
                 put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ left($highlightedvar, $var-width, :ref($var)) ~ t.red ~ ' => ' ~ left($highlightedvalue, $value-width, :ref("$value")) ~ t.text-reset;
                 $cnt++;
             } # %editors.keys.sort -> $var #
