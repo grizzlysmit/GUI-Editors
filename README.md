@@ -44,11 +44,19 @@ Table of Contents
 
       * [In **`init-gui-editors`**](#in-init-gui-editors)
 
-  * [$editor](#editor-1)
+    * [$editor](#editor-1)
 
-  * [Introduction](#introduction)
+  * [Editor functions](#editor-functions)
 
-  * [Introduction](#introduction)
+    * [list-editors(…)](#list-editors)
+
+    * [Introduction](#introduction)
+
+    * [Introduction](#introduction)
+
+    * [Introduction](#introduction)
+
+    * [Introduction](#introduction)
 
 NAME
 ====
@@ -328,4 +336,50 @@ sub editor( --> Str:D) is export {
     return $editor;
 }
 ```
+
+edit-configs()
+--------------
+
+A function to open the users configuration files in their chosen editor.
+
+```raku
+sub edit-configs() returns Bool:D is export {
+    if $editor {
+        my $option = '';
+        my @args;
+        my $edbase = $editor.IO.basename;
+        if $edbase eq 'gvim' {
+            $option = '-p';
+            @args.append('-p');
+        }
+        for @config-files -> $file {
+            if $file eq 'editors' {
+                @args.append("$editor-config/$file");
+            } else {
+                @args.append("$client-config/$file");
+            }
+        }
+        my $proc = run($editor, |@args);
+        return $proc.exitcode == 0 || $proc.exitcode == -1;
+    } else {
+        $*ERR.say: "no editor found please set GUI_EDITOR, VISUAL or EDITOR to your preferred editor.";
+        $*ERR.say: "e.g. export GUI_EDITOR=/usr/bin/gvim";
+        $*ERR.say: "or set editor in the $editor-config/editors file this can be done with the set editor command.";
+        $*ERR.say: qq[NB: the editor will be set by first checking GUI_EDITOR then VISUAL then EDITOR and
+                    finally editor in the config file so GUI_EDITOR will win over all.
+                    Unless you supply the "override GUI_EDITOR" directive in the $editor-config/editors file
+                    and also supplied the "editor := <editor>" directive];
+        return False;
+    }
+}
+```
+
+[Top of Document](#table-of-contents)
+
+Editor functions
+----------------
+
+### list-editors(…)
+
+List all known GUI Editors, flagging the selected editor with ***** note if none is flagged either **`$editor`** is set to a none GUI Editor or **`$editor`** is set to the empty string.
 

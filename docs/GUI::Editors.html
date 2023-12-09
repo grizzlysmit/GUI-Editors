@@ -596,6 +596,9 @@ footer {
  <tr class="toc-level-3"><td class="toc-text"><a href="#$override-GUI_EDITOR">$override-GUI_EDITOR</a></td></tr>
  <tr class="toc-level-4"><td class="toc-text"><a href="#In_init-gui-editors_">In init-gui-editors </a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#$editor">$editor</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#edit-configs()">edit-configs()</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#Editor_functions">Editor functions</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors(…)">list-editors(…)</a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
 <h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
@@ -623,10 +626,16 @@ footer {
 <ul>
 <li><p><a href="#in-init-gui-editors">In <strong><code>init-gui-editors</code></strong></a></p></li>
 </ul>
-</ul>
 <li><p><a href="#editor-1">$editor</a></p></li>
+</ul>
+<li><p><a href="#editor-functions">Editor functions</a></p></li>
+<ul>
+<li><p><a href="#list-editors">list-editors(…)</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#introduction">Introduction</a></p></li>
+</ul>
 </ul>
 <section>
 <h1 id="Name"><a href="#___top" class="u" title="go to top of document">NAME</a></h1>
@@ -792,8 +801,41 @@ sub editor( --&gt; Str:D) is export {
     return $editor;
 }
 
-</pre></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T18:37:49Z</span></div></footer>
+</pre></section><section name="pod"><h2 id="edit-configs()"><a href="#GUI::Editors_0" class="u" title="go to top of document">edit-configs()</a></h2>
+<p>A function to open the users configuration files in their chosen editor.</p><pre class="pod-block-code">sub edit-configs() returns Bool:D is export {
+    if $editor {
+        my $option = '';
+        my @args;
+        my $edbase = $editor.IO.basename;
+        if $edbase eq 'gvim' {
+            $option = '-p';
+            @args.append('-p');
+        }
+        for @config-files -&gt; $file {
+            if $file eq 'editors' {
+                @args.append(&quot;$editor-config/$file&quot;);
+            } else {
+                @args.append(&quot;$client-config/$file&quot;);
+            }
+        }
+        my $proc = run($editor, |@args);
+        return $proc.exitcode == 0 || $proc.exitcode == -1;
+    } else {
+        $*ERR.say: &quot;no editor found please set GUI_EDITOR, VISUAL or EDITOR to your preferred editor.&quot;;
+        $*ERR.say: &quot;e.g. export GUI_EDITOR=/usr/bin/gvim&quot;;
+        $*ERR.say: &quot;or set editor in the $editor-config/editors file this can be done with the set editor command.&quot;;
+        $*ERR.say: qq[NB: the editor will be set by first checking GUI_EDITOR then VISUAL then EDITOR and
+                    finally editor in the config file so GUI_EDITOR will win over all.
+                    Unless you supply the &quot;override GUI_EDITOR&quot; directive in the $editor-config/editors file
+                    and also supplied the &quot;editor := &lt;editor&gt;&quot; directive];
+        return False;
+    }
+}
+
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="Editor_functions"><a href="#GUI::Editors_0" class="u" title="go to top of document">Editor functions</a></h2>
+<h3 id="list-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors(…)</a></h3>
+<p>List all known GUI Editors, flagging the selected editor with <strong>*</strong> note if none is flagged either <strong><code>$editor</code></strong> is set to a none GUI Editor or <strong><code>$editor</code></strong> is set to the empty string.</p></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T19:11:45Z</span></div></footer>
 	</body>
 </html>
 

@@ -30,9 +30,13 @@ Table of Contents
 =item2 L<@override-gui_editor|#override-gui_editor>
 =item2 L<$override-GUI_EDITOR|#override-gui_editor-1>
 =item3 L<In B«C«init-gui-editors»»|#in-init-gui-editors>
-=item1 L<$editor|#editor-1>
-=item1 L<Introduction|#introduction>
-=item1 L<Introduction|#introduction>
+=item2 L<$editor|#editor-1>
+=item1 L<Editor functions|#editor-functions>
+=item2 L<list-editors(…)|#list-editors>
+=item2 L<Introduction|#introduction>
+=item2 L<Introduction|#introduction>
+=item2 L<Introduction|#introduction>
+=item2 L<Introduction|#introduction>
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
@@ -718,6 +722,50 @@ if $please-edit {
     exit 0;
 }
 
+=begin pod
+
+=head2 edit-configs()
+
+A function to open the users configuration files in their chosen editor.
+
+=begin code :lang<raku>
+
+sub edit-configs() returns Bool:D is export {
+    if $editor {
+        my $option = '';
+        my @args;
+        my $edbase = $editor.IO.basename;
+        if $edbase eq 'gvim' {
+            $option = '-p';
+            @args.append('-p');
+        }
+        for @config-files -> $file {
+            if $file eq 'editors' {
+                @args.append("$editor-config/$file");
+            } else {
+                @args.append("$client-config/$file");
+            }
+        }
+        my $proc = run($editor, |@args);
+        return $proc.exitcode == 0 || $proc.exitcode == -1;
+    } else {
+        $*ERR.say: "no editor found please set GUI_EDITOR, VISUAL or EDITOR to your preferred editor.";
+        $*ERR.say: "e.g. export GUI_EDITOR=/usr/bin/gvim";
+        $*ERR.say: "or set editor in the $editor-config/editors file this can be done with the set editor command.";
+        $*ERR.say: qq[NB: the editor will be set by first checking GUI_EDITOR then VISUAL then EDITOR and
+                    finally editor in the config file so GUI_EDITOR will win over all.
+                    Unless you supply the "override GUI_EDITOR" directive in the $editor-config/editors file
+                    and also supplied the "editor := <editor>" directive];
+        return False;
+    }
+}
+
+=end code
+
+L<Top of Document|#table-of-contents>
+
+=end pod
+
 sub edit-configs() returns Bool:D is export {
     if $editor {
         my $option = '';
@@ -845,17 +893,33 @@ sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen
     ##################################
 #»»»
 
+=begin pod
+
+=head2 Editor functions
+
+=head3 list-editors(…)
+
+List all known GUI Editors, flagging the selected editor with B<*>
+note if none is flagged either B<C<$editor>> is set to a none GUI Editor 
+or B<C<$editor>> is set to the empty string.
+
+=end pod
+
 sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
     $colour = True if $syntax;
     my Int:D $cnt = 0;
     my Str:D $mark = '';
+    my Str:D @all-guieditors;
+    for (|@guieditors, |@gui-editors) -> $ed {
+        @all-guieditors.push: $ed if !@all-guieditors.grep: -> $e { $ed eq $e };
+    }
     if $colour {
         if $syntax {
             put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-30s %-14s", 'editors', 'actual editor') ~ t.text-reset;
             $cnt++;
             put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '#' x 45) ~ t.text-reset;
             $cnt++;
-            for @guieditors -> $ed {
+            for @all-guieditors -> $ed {
                 if $editor.trim.IO.basename eq $ed.trim.IO.basename {
                     $mark = '*';
                 } else {
@@ -863,7 +927,7 @@ sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
                 }
                 put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,255,0) ~ sprintf("%-30s ", $ed) ~ t.color(255,0,255) ~ sprintf("%-14s", $mark) ~ t.text-reset;
                 $cnt++;
-            } # @guieditors -> $ed #
+            } # @all-guieditors -> $ed #
             put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '') ~ t.text-reset;
             $cnt++;
         } else { # if $syntax #
@@ -871,7 +935,7 @@ sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
             $cnt++;
             put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '#' x 45) ~ t.text-reset;
             $cnt++;
-            for @guieditors -> $ed {
+            for @all-guieditors -> $ed {
                 if $editor.trim.IO.basename eq $ed.trim.IO.basename {
                     $mark = '*';
                 } else {
@@ -879,20 +943,20 @@ sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
                 }
                 put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-30s %-14s", $ed, $mark) ~ t.text-reset;
                 $cnt++;
-            } # @guieditors -> $ed #
+            } # @all-guieditors -> $ed #
             put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '') ~ t.text-reset;
             $cnt++;
         } # if $syntax else #
     } else { # if $colour #
         printf "%-30s %-10s\n", 'editors', 'actual editor';
         ('#' x 44).say;
-        for @guieditors -> $ed {
+        for @all-guieditors -> $ed {
             if $editor.trim.IO.basename eq $ed.trim.IO.basename {
                 printf "%-30s %-10s\n", $ed, '*';
             } else {
                 $ed.say;
             }
-        } # @guieditors -> $ed #
+        } # @all-guieditors -> $ed #
         ''.say;
     } # if $colour else #
     return True;
