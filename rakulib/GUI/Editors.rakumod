@@ -29,7 +29,7 @@ Table of Contents
 =item2 L<@default-editors|#default-editors>
 =item2 L<@override-gui_editor|#override-gui_editor>
 =item2 L<$override-GUI_EDITOR|#override-gui_editor-1>
-=item3 L<In B«C«init-gui-editors»»|#in-bcinit-gui-editors>
+=item3 L<In B«C«init-gui-editors»»|#in-init-gui-editors>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>

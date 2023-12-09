@@ -42,7 +42,7 @@ Table of Contents
 
     * [$override-GUI_EDITOR](#override-gui_editor-1)
 
-      * [In **`init-gui-editors`**](#in-bcinit-gui-editors)
+      * [In **`init-gui-editors`**](#in-init-gui-editors)
 
   * [Introduction](#introduction)
 
