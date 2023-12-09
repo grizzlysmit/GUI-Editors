@@ -606,7 +606,9 @@ sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path,
 
 =end code
 ...
+
 ...
+
 ...
 
 =begin code :lang<raku>

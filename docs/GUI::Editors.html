@@ -743,7 +743,7 @@ sub override-GUI_EDITOR( --&gt; Bool:D) is export {
                                   &amp;check:(Str:D @cfg-files, Str:D $config --&gt; Bool:D)
                                                                     --&gt; Bool:D) is  export
 
-</pre><p>... ... ...</p><pre class="pod-block-code">@GUIEDITORS = Editors.parse(@editors-file.join(&quot;\x0A&quot;), :enc('UTF-8'), :$actions).made;
+</pre><p>...</p><p>...</p><p>...</p><pre class="pod-block-code">@GUIEDITORS = Editors.parse(@editors-file.join(&quot;\x0A&quot;), :enc('UTF-8'), :$actions).made;
 @gui-editors = @GUIEDITORS.grep( -&gt; %l { %l«type» eq 'config-line' } ).map: -&gt; %ln { %ln«value»; };
 @default-editors = @GUIEDITORS.grep( -&gt; %l { %l«type» eq 'editor-to-use' } ).map: -&gt; %ln { %ln«value»; };
 if @default-editors &gt; 1 {
@@ -759,7 +759,7 @@ if @override-gui_editor &gt; 1 {
 }
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T17:55:37Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T17:57:00Z</span></div></footer>
 	</body>
 </html>
 
