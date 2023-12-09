@@ -24,8 +24,8 @@ Table of Contents
 =item2 L<$GUI_EDITOR|#gui_editor>
 =item2 L<$VISUAL|#visual>
 =item2 L<$EDITOR|#editor>
-=item2 L<@GUIEDITORS|#guieditors>
-=item2 L<@gui-editors|#gui-editors-2>
+=item2 L<@GUIEDITORS|#guieditors-2>
+=item2 L<@gui-editors|#gui-editors>
 =item2 L<@default-editors|#default-editors>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>

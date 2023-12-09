@@ -32,9 +32,9 @@ Table of Contents
 
     * [$EDITOR](#editor)
 
-    * [@GUIEDITORS](#guieditors)
+    * [@GUIEDITORS](#guieditors-2)
 
-    * [@gui-editors](#gui-editors-2)
+    * [@gui-editors](#gui-editors)
 
     * [@default-editors](#default-editors)
 
