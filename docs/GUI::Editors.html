@@ -738,7 +738,7 @@ sub override-GUI_EDITOR( --&gt; Bool:D) is export {
     return $override-GUI_EDITOR;
 }
 
-</pre><p>In <strong><code>init-gui-editors</code></strong> </p><pre class="pod-block-code">sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path,
+</pre><p><a href="#table-of-contents">Top of Document</a></p><p>In <strong><code>init-gui-editors</code></strong> </p><pre class="pod-block-code">sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path,
                               &amp;gen-configs:(Str:D, Str:D --&gt; Bool:D),
                                   &amp;check:(Str:D @cfg-files, Str:D $config --&gt; Bool:D)
                                                                     --&gt; Bool:D) is  export
@@ -757,9 +757,30 @@ if @override-gui_editor &gt; 1 {
 } elsif @override-gui_editor == 1 {
     $override-GUI_EDITOR = True;
 }
+if @gui-editors {
+    #@gui-editors.raku.say;
+    for @gui-editors -&gt; $geditor {
+        if !@guieditors.grep: { $geditor } {
+            my Str $guieditor = $geditor;
+            $guieditor .=trim;
+            @guieditors.append($guieditor);
+        }
+    }
+}
+
+if $override-GUI_EDITOR &amp;&amp; @default-editors {
+    $editor = @default-editors[@default-editors - 1];
+}elsif %*ENV&lt;GUI_EDITOR&gt;:exists {
+    my Str $guieditor = ~%*ENV&lt;GUI_EDITOR&gt;;
+    if ! @guieditors.grep( { $_ eq $guieditor.IO.basename } ) {
+        @guieditors.prepend($guieditor.IO.basename);
+    }
+} elsif $editor-guessed &amp;&amp; @default-editors {
+    $editor = @default-editors[@default-editors - 1];
+}
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T17:57:00Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T18:04:02Z</span></div></footer>
 	</body>
 </html>
 

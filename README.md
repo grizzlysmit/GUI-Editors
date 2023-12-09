@@ -259,6 +259,8 @@ sub override-GUI_EDITOR( --> Bool:D) is export {
 }
 ```
 
+[Top of Document](#table-of-contents)
+
 In **`init-gui-editors`** 
 
 ```raku
@@ -288,6 +290,27 @@ if @override-gui_editor > 1 {
     $override-GUI_EDITOR = True;
 } elsif @override-gui_editor == 1 {
     $override-GUI_EDITOR = True;
+}
+if @gui-editors {
+    #@gui-editors.raku.say;
+    for @gui-editors -> $geditor {
+        if !@guieditors.grep: { $geditor } {
+            my Str $guieditor = $geditor;
+            $guieditor .=trim;
+            @guieditors.append($guieditor);
+        }
+    }
+}
+
+if $override-GUI_EDITOR && @default-editors {
+    $editor = @default-editors[@default-editors - 1];
+}elsif %*ENV<GUI_EDITOR>:exists {
+    my Str $guieditor = ~%*ENV<GUI_EDITOR>;
+    if ! @guieditors.grep( { $_ eq $guieditor.IO.basename } ) {
+        @guieditors.prepend($guieditor.IO.basename);
+    }
+} elsif $editor-guessed && @default-editors {
+    $editor = @default-editors[@default-editors - 1];
 }
 ```
 
