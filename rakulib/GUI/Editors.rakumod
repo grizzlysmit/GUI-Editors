@@ -599,8 +599,10 @@ In B«C«init-gui-editors»»
 
 =begin code :lang<raku>
 
-sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D),
-                                           &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is  export
+sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path,
+                              &gen-configs:(Str:D, Str:D --> Bool:D),
+                                  &check:(Str:D @cfg-files, Str:D $config --> Bool:D)
+                                                                    --> Bool:D) is  export
 
 =end code
 ...
