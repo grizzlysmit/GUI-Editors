@@ -486,6 +486,8 @@ sub EDITOR( --> Str:D) is export {
 
 =end code
 
+L<Top of Document|#table-of-contents>
+
 =head3 @GUIEDITORS
 
 The Array of Hashes that the B<C<Editors>> grammar and B<C<EditorsActions>> generate from parsing the B<editors> file.

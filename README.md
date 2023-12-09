@@ -193,6 +193,8 @@ sub EDITOR( --> Str:D) is export {
 }
 ```
 
+[Top of Document](#table-of-contents)
+
 ### @GUIEDITORS
 
 The Array of Hashes that the **`Editors`** grammar and **`EditorsActions`** generate from parsing the **editors** file.
