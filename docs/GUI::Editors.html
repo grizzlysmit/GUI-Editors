@@ -584,6 +584,7 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#$editor-config">$editor-config</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#@config-files">@config-files</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#@guieditors">@guieditors</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#grammar_Editors">grammar Editors</a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
 <h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
@@ -629,8 +630,42 @@ sub guieditors( --&gt; Array[Str:D]) is export {
     return @guieditors;
 }
 
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="grammar_Editors"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar Editors</a></h2>
+<pre class="pod-block-code">grammar Editors is export {
+    regex TOP                 { [ &lt;line&gt; [ \v+ &lt;line&gt; ]* \v* ]? }
+    regex line                { [ &lt;white-space-line&gt; || &lt;override-gui_editor&gt; || &lt;config-line&gt; || &lt;editor-to-use&gt; || &lt;comment-line&gt; ] }
+    regex white-space-line    { ^^ \h* $$ }
+    regex override-gui_editor { ^^ \h* 'override' \h+ 'GUI_EDITOR' \h* $$ }
+    regex comment-line        { ^^ \h* '#' &lt;-[\v]&gt;* $$ }
+    regex config-line         { ^^ \h* 'guieditors' \h* '+'? '=' \h* &lt;editor&gt; \h* [ '#' &lt;comment&gt; \h* ]? $$ }
+    regex editor-to-use       { ^^ \h* 'editor' \h* ':'? '=' \h* &lt;editor&gt; \h* [ '#' &lt;comment&gt; \h* ]? $$ }
+    regex editor              { &lt;editor-name&gt; || &lt;path&gt; &lt;editor-name&gt; }
+    regex comment             { &lt;-[\n]&gt;* }
+    regex path                { &lt;lead-in&gt;  &lt;path-segments&gt;? }
+    regex lead-in             { [ '/' | '~' | '~/' ] }
+    regex path-segments       { &lt;path-segment&gt; [ '/' &lt;path-segment&gt; ]* '/' }
+    token path-segment        { [ &lt;with-space-in-it&gt; || &lt;with-other-stuff&gt; ] }
+    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    token with-other-stuff    { &lt;start-other-stuff&gt; &lt;tail-other-stuff&gt;* }
+    token start-other-stuff   { \w+ }
+    token tail-other-stuff    { &lt;other-stuff&gt;+ &lt;tails-tail&gt;? }
+    token tails-tail          { \w+ }
+    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&amp;' || '%' || '.' ] }
+    token editor-name         { &lt;with-other-stuff&gt; }
+}
+
+class EditorsActions is export {
+    ...
+    ...
+    ...
+    method TOP($made) {
+        my @top = $made&lt;line&gt;».made;
+        $made.make: @top;
+    }
+} # class EditorsActions #
+
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T06:01:13Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T06:10:43Z</span></div></footer>
 	</body>
 </html>
 

@@ -241,7 +241,50 @@ sub generate-configs(Str $file) returns Bool:D {
     return $result;
 } # sub generate-configs(Str $file) returns Bool:D #
 
+=begin pod
 
+=head2 grammar Editors
+
+=begin code :lang<raku>
+
+grammar Editors is export {
+    regex TOP                 { [ <line> [ \v+ <line> ]* \v* ]? }
+    regex line                { [ <white-space-line> || <override-gui_editor> || <config-line> || <editor-to-use> || <comment-line> ] }
+    regex white-space-line    { ^^ \h* $$ }
+    regex override-gui_editor { ^^ \h* 'override' \h+ 'GUI_EDITOR' \h* $$ }
+    regex comment-line        { ^^ \h* '#' <-[\v]>* $$ }
+    regex config-line         { ^^ \h* 'guieditors' \h* '+'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
+    regex editor-to-use       { ^^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
+    regex editor              { <editor-name> || <path> <editor-name> }
+    regex comment             { <-[\n]>* }
+    regex path                { <lead-in>  <path-segments>? }
+    regex lead-in             { [ '/' | '~' | '~/' ] }
+    regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
+    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
+    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
+    token start-other-stuff   { \w+ }
+    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
+    token tails-tail          { \w+ }
+    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
+    token editor-name         { <with-other-stuff> }
+}
+
+class EditorsActions is export {
+    ...
+    ...
+    ...
+    method TOP($made) {
+        my @top = $made<line>».made;
+        $made.make: @top;
+    }
+} # class EditorsActions #
+
+=end code
+
+L<Top of Document|#table-of-contents>
+
+=end pod
 
 #`«««
     ###############################################################################
