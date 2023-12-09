@@ -383,5 +383,5 @@ Editor functions
 
 ### list-editors(…)
 
-List all known GUI Editors, flagging the selected editor with ***** note if none is flagged either **`$editor`** is set to a none GUI Editor or **`$editor`** is set to the empty string.
+List all known GUI Editors, flagging the selected editor with **'*'** note if none is flagged either **`$editor`** is set to a none GUI Editor or **`$editor`** is set to the empty string.
 

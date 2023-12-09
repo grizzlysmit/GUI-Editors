@@ -900,7 +900,7 @@ sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen
 
 =head3 list-editors(…)
 
-List all known GUI Editors, flagging the selected editor with B<*>
+List all known GUI Editors, flagging the selected editor with B<'*'>
 note if none is flagged either B<C<$editor>> is set to a none GUI Editor 
 or B<C<$editor>> is set to the empty string.
 
