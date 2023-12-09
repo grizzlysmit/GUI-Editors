@@ -49,6 +49,14 @@ $EDITOR [#editor]
 @default\-editors [#default-editors]
 .RE
 .IP \(bu 2m
+@override\-gui_editor [#override-gui_editor]
+.IP \(bu 2m
+$override\-GUI_EDITOR [#@override-gui_editor-1]
+.IP \(bu 2m
+Introduction [#introduction]
+.IP \(bu 2m
+Introduction [#introduction]
+.IP \(bu 2m
 Introduction [#introduction]
 .IP \(bu 2m
 Introduction [#introduction]
@@ -162,6 +170,8 @@ class EditorsActions is export {
 .P
 Top of Document [#table-of-contents]
 .SS Some useful variables
+
+\fBNB: All these variables are available outside of the module as a sub of the same name\&. That way I can give read only access to them\&.\fR
 .SS $GUI_EDITOR
 
 The value of the \fB%*ENV«GUI_EDITOR»\fR environment variable or \fB''\fR if not set\&.

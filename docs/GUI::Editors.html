@@ -617,6 +617,10 @@ footer {
 <li><p><a href="#gui-editors">@gui-editors</a></p></li>
 <li><p><a href="#default-editors">@default-editors</a></p></li>
 </ul>
+<li><p><a href="#override-gui_editor">@override-gui_editor</a></p></li>
+<li><p><a href="#@override-gui_editor-1">$override-GUI_EDITOR</a></p></li>
+<li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 </ul>
@@ -682,7 +686,7 @@ class EditorsActions is export {
 } # class EditorsActions #
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="Some_useful_variables"><a href="#GUI::Editors_0" class="u" title="go to top of document">Some useful variables</a></h2>
-<h3 id="$GUI_EDITOR"><a href="#GUI::Editors_0" class="u" title="go to top of document">$GUI_EDITOR</a></h3>
+<p><strong>NB: All these variables are available outside of the module as a sub of the same name. That way I can give read only access to them.</strong></p><h3 id="$GUI_EDITOR"><a href="#GUI::Editors_0" class="u" title="go to top of document">$GUI_EDITOR</a></h3>
 <p>The value of the <strong><code>%*ENV«GUI_EDITOR»</code></strong> environment variable or <strong><code>''</code></strong> if not set.</p><h3 id="$VISUAL"><a href="#GUI::Editors_0" class="u" title="go to top of document">$VISUAL</a></h3>
 <p>The value of the <strong><code>%*ENV«VISUAL»</code></strong> environment variable or <strong><code>''</code></strong> if not set.</p><h3 id="$EDITOR"><a href="#GUI::Editors_0" class="u" title="go to top of document">$EDITOR</a></h3>
 <p>The value of the <strong><code>%*ENV«EDITOR»</code></strong> environment variable or <strong><code>''</code></strong> if not set.</p><pre class="pod-block-code">my Str:D $GUI_EDITOR = ((%*ENV&lt;GUI_EDITOR&gt;:exists) ?? ~%*ENV&lt;GUI_EDITOR&gt; !! '');
@@ -753,7 +757,7 @@ if @override-gui_editor &gt; 1 {
 }
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T17:42:10Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T17:49:53Z</span></div></footer>
 	</body>
 </html>
 

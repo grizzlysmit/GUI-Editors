@@ -38,6 +38,14 @@ Table of Contents
 
     * [@default-editors](#default-editors)
 
+  * [@override-gui_editor](#override-gui_editor)
+
+  * [$override-GUI_EDITOR](#@override-gui_editor-1)
+
+  * [Introduction](#introduction)
+
+  * [Introduction](#introduction)
+
   * [Introduction](#introduction)
 
   * [Introduction](#introduction)
@@ -162,6 +170,8 @@ class EditorsActions is export {
 
 Some useful variables
 ---------------------
+
+**NB: All these variables are available outside of the module as a sub of the same name. That way I can give read only access to them.**
 
 ### $GUI_EDITOR
 
