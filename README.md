@@ -46,6 +46,8 @@ Table of Contents
 
     * [$editor](#editor-1)
 
+  * [edit-configs()](#edit-configs)
+
   * [Editor functions](#editor-functions)
 
     * [list-editors(…)](#list-editors)

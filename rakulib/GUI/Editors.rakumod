@@ -31,6 +31,7 @@ Table of Contents
 =item2 L<$override-GUI_EDITOR|#override-gui_editor-1>
 =item3 L<In B«C«init-gui-editors»»|#in-init-gui-editors>
 =item2 L<$editor|#editor-1>
+=item1 L<edit-configs()|#edit-configs>
 =item1 L<Editor functions|#editor-functions>
 =item2 L<list-editors(…)|#list-editors>
 =item2 L<Introduction|#introduction>
