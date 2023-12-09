@@ -20,12 +20,13 @@ Table of Contents
 =item1 L<$editor-config|#editor-config>
 =item1 L<@config-files|#config-files>
 =item1 L<grammar Editors|#grammar-editors>
-=item1 L<$GUI_EDITOR|#gui_editor>
-=item1 L<$VISUAL|#visual>
-=item1 L<$EDITOR|#editor>
-=item1 L<@GUIEDITORS|#guieditors>
-=item1 L<@gui-editors|#gui-editors>
-=item1 L<@default-editors|#default-editors>
+=item1 L<Some useful variables|#some-useful-variables>
+=item2 L<$GUI_EDITOR|#gui_editor>
+=item2 L<$VISUAL|#visual>
+=item2 L<$EDITOR|#editor>
+=item2 L<@GUIEDITORS|#guieditors>
+=item2 L<@gui-editors|#gui-editors>
+=item2 L<@default-editors|#default-editors>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
 
@@ -451,7 +452,7 @@ class EditorsActions is export {
 
 =begin pod
 
-=head2 Some useful variables.
+=head2 Some useful variables
 
 =head3 $GUI_EDITOR
 

@@ -24,17 +24,19 @@ Table of Contents
 
   * [grammar Editors](#grammar-editors)
 
-  * [$GUI_EDITOR](#gui_editor)
+  * [Some useful variables](#some-useful-variables)
 
-  * [$VISUAL](#visual)
+    * [$GUI_EDITOR](#gui_editor)
 
-  * [$EDITOR](#editor)
+    * [$VISUAL](#visual)
 
-  * [@GUIEDITORS](#guieditors)
+    * [$EDITOR](#editor)
 
-  * [@gui-editors](#gui-editors)
+    * [@GUIEDITORS](#guieditors)
 
-  * [@default-editors](#default-editors)
+    * [@gui-editors](#gui-editors)
+
+    * [@default-editors](#default-editors)
 
   * [Introduction](#introduction)
 
@@ -158,8 +160,8 @@ class EditorsActions is export {
 
 [Top of Document](#table-of-contents)
 
-Some useful variables.
-----------------------
+Some useful variables
+---------------------
 
 ### $GUI_EDITOR
 
