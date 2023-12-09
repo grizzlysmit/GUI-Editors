@@ -599,6 +599,8 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#edit-configs()">edit-configs()</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Editor_functions">Editor functions</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors(…)">list-editors(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors-file()">list-editors-file()</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#editors-stats(…)">editors-stats(…)</a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
 <h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
@@ -632,8 +634,8 @@ footer {
 <li><p><a href="#editor-functions">Editor functions</a></p></li>
 <ul>
 <li><p><a href="#list-editors">list-editors(…)</a></p></li>
-<li><p><a href="#introduction">Introduction</a></p></li>
-<li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#introduction">list-editors-file(…)</a></p></li>
+<li><p><a href="#editors-stats">editors-stats(…)</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 </ul>
@@ -835,8 +837,16 @@ sub editor( --&gt; Str:D) is export {
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="Editor_functions"><a href="#GUI::Editors_0" class="u" title="go to top of document">Editor functions</a></h2>
 <h3 id="list-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors(…)</a></h3>
-<p>List all known GUI Editors, flagging the selected editor with <strong>'*'</strong> note if none is flagged either <strong><code>$editor</code></strong> is set to a none GUI Editor or <strong><code>$editor</code></strong> is set to the empty string.</p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T19:19:42Z</span></div></footer>
+<p>List all known GUI Editors, flagging the selected editor with <strong>'*'</strong> note if none is flagged either <strong><code>$editor</code></strong> is set to a non GUI Editor or <strong><code>$editor</code></strong> is set to the empty string.</p><pre class="pod-block-code">sub list-editors(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
+
+</pre></section><section name="pod"><h3 id="list-editors-file()"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-file()</a></h3>
+<p>List all GUI Editors in the configuration file.</p><pre class="pod-block-code">sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
+
+</pre></section><section name="pod"><h3 id="editors-stats(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">editors-stats(…)</a></h3>
+<p>Show the values of some editors parameters.</p><pre class="pod-block-code">sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
+
+</pre></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T21:51:57Z</span></div></footer>
 	</body>
 </html>
 

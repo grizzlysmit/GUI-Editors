@@ -52,9 +52,9 @@ Table of Contents
 
     * [list-editors(…)](#list-editors)
 
-    * [Introduction](#introduction)
+    * [list-editors-file(…)](#introduction)
 
-    * [Introduction](#introduction)
+    * [editors-stats(…)](#editors-stats)
 
     * [Introduction](#introduction)
 
@@ -383,5 +383,25 @@ Editor functions
 
 ### list-editors(…)
 
-List all known GUI Editors, flagging the selected editor with **'*'** note if none is flagged either **`$editor`** is set to a none GUI Editor or **`$editor`** is set to the empty string.
+List all known GUI Editors, flagging the selected editor with **'*'** note if none is flagged either **`$editor`** is set to a non GUI Editor or **`$editor`** is set to the empty string.
+
+```raku
+sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
+```
+
+### list-editors-file()
+
+List all GUI Editors in the configuration file.
+
+```raku
+sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
+```
+
+### editors-stats(…)
+
+Show the values of some editors parameters.
+
+```raku
+sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
+```
 

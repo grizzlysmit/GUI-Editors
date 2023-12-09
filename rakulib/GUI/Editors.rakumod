@@ -34,8 +34,8 @@ Table of Contents
 =item1 L<edit-configs()|#edit-configs>
 =item1 L<Editor functions|#editor-functions>
 =item2 L<list-editors(…)|#list-editors>
-=item2 L<Introduction|#introduction>
-=item2 L<Introduction|#introduction>
+=item2 L<list-editors-file(…)|#introduction>
+=item2 L<editors-stats(…)|#editors-stats>
 =item2 L<Introduction|#introduction>
 =item2 L<Introduction|#introduction>
 
@@ -901,8 +901,14 @@ sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen
 =head3 list-editors(…)
 
 List all known GUI Editors, flagging the selected editor with B<'*'>
-note if none is flagged either B<C<$editor>> is set to a none GUI Editor 
+note if none is flagged either B<C<$editor>> is set to a non GUI Editor 
 or B<C<$editor>> is set to the empty string.
+
+=begin code :lang<raku>
+
+sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export 
+
+=end code
 
 =end pod
 
@@ -963,6 +969,20 @@ sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
     return True;
 } # sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export #
 
+=begin pod
+
+=head3 list-editors-file()
+
+List all GUI Editors in the configuration file.
+
+=begin code :lang<raku>
+
+sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export 
+
+=end code
+
+=end pod
+
 sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
     $colour = True if $syntax;
     my Int:D $cnt = 0;
@@ -1015,6 +1035,20 @@ sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
     } # if $colour else #
     return True;
 } # sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export #
+
+=begin pod
+
+=head3 editors-stats(…)
+
+Show the values of some editors parameters.
+
+=begin code :lang<raku>
+
+sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export 
+
+=end code
+
+=end pod
 
 sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
     $colour = True if $syntax;

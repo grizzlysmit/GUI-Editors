@@ -76,11 +76,11 @@ list\-editors(…) [#list-editors]
 .RE
 .RS 2n
 .IP \(bu 2m
-Introduction [#introduction]
+list\-editors\-file(…) [#introduction]
 .RE
 .RS 2n
 .IP \(bu 2m
-Introduction [#introduction]
+editors\-stats(…) [#editors-stats]
 .RE
 .RS 2n
 .IP \(bu 2m
@@ -416,4 +416,34 @@ Top of Document [#table-of-contents]
 .SS Editor functions
 .SS list\-editors(…)
 
-List all known GUI Editors, flagging the selected editor with \fB'*'\fR note if none is flagged either \fB$editor\fR is set to a none GUI Editor or \fB$editor\fR is set to the empty string\&.
+List all known GUI Editors, flagging the selected editor with \fB'*'\fR note if none is flagged either \fB$editor\fR is set to a non GUI Editor or \fB$editor\fR is set to the empty string\&.
+
+.RS 4m
+.EX
+sub list\-editors(Bool:D $colour is copy, Bool:D $syntax \-\-> Bool) is export 
+
+
+.EE
+.RE
+.SS list\-editors\-file()
+
+List all GUI Editors in the configuration file\&.
+
+.RS 4m
+.EX
+sub list\-editors\-file(Bool:D $colour is copy, Bool:D $syntax \-\-> Bool) is export 
+
+
+.EE
+.RE
+.SS editors\-stats(…)
+
+Show the values of some editors parameters\&.
+
+.RS 4m
+.EX
+sub editors\-stats(Bool:D $colour is copy, Bool:D $syntax \-\-> Bool) is export 
+
+
+.EE
+.RE
