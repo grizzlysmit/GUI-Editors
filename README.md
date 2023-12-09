@@ -405,3 +405,5 @@ Show the values of some editors parameters.
 sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
 ```
 
+[Top of Document](#table-of-contents)
+

@@ -1048,6 +1048,8 @@ sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
 
 =end code
 
+L<Top of Document|#table-of-contents>
+
 =end pod
 
 sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
