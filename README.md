@@ -34,7 +34,7 @@ Table of Contents
 
     * [@GUIEDITORS](#guieditors)
 
-    * [@gui-editors](#gui-editors)
+    * [@gui-editors](#gui-editors-2)
 
     * [@default-editors](#default-editors)
 
