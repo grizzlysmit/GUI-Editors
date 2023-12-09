@@ -44,7 +44,7 @@ Table of Contents
 
       * [In **`init-gui-editors`**](#in-init-gui-editors)
 
-  * [Introduction](#introduction)
+  * [$editor](#editor-1)
 
   * [Introduction](#introduction)
 
