@@ -38,9 +38,9 @@ Table of Contents
 
     * [@default-editors](#default-editors)
 
-  * [@override-gui_editor](#override-gui_editor)
+    * [@override-gui_editor](#override-gui_editor)
 
-  * [$override-GUI_EDITOR](#@override-gui_editor-1)
+    * [$override-GUI_EDITOR](#override-gui_editor-1)
 
   * [Introduction](#introduction)
 

@@ -27,8 +27,8 @@ Table of Contents
 =item2 L<@GUIEDITORS|#guieditors-2>
 =item2 L<@gui-editors|#gui-editors>
 =item2 L<@default-editors|#default-editors>
-=item1 L<@override-gui_editor|#override-gui_editor>
-=item1 L<$override-GUI_EDITOR|#@override-gui_editor-1>
+=item2 L<@override-gui_editor|#override-gui_editor>
+=item2 L<$override-GUI_EDITOR|#override-gui_editor-1>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
