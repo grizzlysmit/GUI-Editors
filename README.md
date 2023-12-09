@@ -24,7 +24,17 @@ Table of Contents
 
   * [grammar Editors](#grammar-editors)
 
-  * [Introduction](#introduction)
+  * [$GUI_EDITOR](#gui_editor)
+
+  * [$VISUAL](#visual)
+
+  * [$EDITOR](#editor)
+
+  * [@GUIEDITORS](#guieditors)
+
+  * [@gui-editors](#gui-editors)
+
+  * [@default-editors](#default-editors)
 
   * [Introduction](#introduction)
 
@@ -144,6 +154,71 @@ class EditorsActions is export {
         $made.make: @top;
     }
 } # class EditorsActions #
+```
+
+[Top of Document](#table-of-contents)
+
+Some useful variables.
+----------------------
+
+### $GUI_EDITOR
+
+The value of the **`%*ENV«GUI_EDITOR»`** environment variable or **`''`** if not set.
+
+### $VISUAL
+
+The value of the **`%*ENV«VISUAL»`** environment variable or **`''`** if not set.
+
+### $EDITOR
+
+The value of the **`%*ENV«EDITOR»`** environment variable or **`''`** if not set.
+
+```raku
+my Str:D $GUI_EDITOR = ((%*ENV<GUI_EDITOR>:exists) ?? ~%*ENV<GUI_EDITOR> !! '');
+my Str:D $VISUAL     = ((%*ENV<VISUAL>:exists) ?? ~%*ENV<VISUAL> !! '');
+my Str:D $EDITOR     = ((%*ENV<EDITOR>:exists) ?? ~%*ENV<EDITOR> !! '');
+
+sub GUI_EDITOR( --> Str:D) is export {
+    return $GUI_EDITOR;
+}
+
+sub VISUAL( --> Str:D) is export {
+    return $VISUAL;
+}
+
+sub EDITOR( --> Str:D) is export {
+    return $EDITOR;
+}
+```
+
+### @GUIEDITORS
+
+The Array of Hashes that the **`Editors`** grammar and **`EditorsActions`** generate from parsing the **editors** file.
+
+### @gui-editors
+
+The Array of GUI Editors defined in the **editors** file.
+
+### @default-editors
+
+The array of **editors** selected in the file should have only **one** element otherwise the file is miss configured.
+
+```raku
+my Hash @GUIEDITORS;
+my Str:D @gui-editors;
+my Str:D @default-editors;
+
+sub GUIEDITORS( --> Array[Hash]) is export {
+    return @GUIEDITORS;
+}
+
+sub gui-editors( --> Array[Str:D]) is export {
+    return @gui-editors;
+}
+
+sub default-editors( --> Array[Str:D]) is export {
+    return @default-editors;
+}
 ```
 
 [Top of Document](#table-of-contents)

@@ -585,6 +585,13 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#@config-files">@config-files</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#@guieditors">@guieditors</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#grammar_Editors">grammar Editors</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#Some_useful_variables.">Some useful variables.</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#$GUI_EDITOR">$GUI_EDITOR</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#$VISUAL">$VISUAL</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#$EDITOR">$EDITOR</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#@GUIEDITORS">@GUIEDITORS</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#@gui-editors">@gui-editors</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#@default-editors">@default-editors</a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
 <h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
@@ -599,7 +606,12 @@ footer {
 <li><p><a href="#editor-config">$editor-config</a></p></li>
 <li><p><a href="#config-files">@config-files</a></p></li>
 <li><p><a href="#grammar-editors">grammar Editors</a></p></li>
-<li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#gui_editor">$GUI_EDITOR</a></p></li>
+<li><p><a href="#visual">$VISUAL</a></p></li>
+<li><p><a href="#editor">$EDITOR</a></p></li>
+<li><p><a href="#guieditors">@GUIEDITORS</a></p></li>
+<li><p><a href="#gui-editors">@gui-editors</a></p></li>
+<li><p><a href="#default-editors">@default-editors</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 </ul>
@@ -664,8 +676,47 @@ class EditorsActions is export {
     }
 } # class EditorsActions #
 
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="Some_useful_variables."><a href="#GUI::Editors_0" class="u" title="go to top of document">Some useful variables.</a></h2>
+<h3 id="$GUI_EDITOR"><a href="#GUI::Editors_0" class="u" title="go to top of document">$GUI_EDITOR</a></h3>
+<p>The value of the <strong><code>%*ENV«GUI_EDITOR»</code></strong> environment variable or <strong><code>''</code></strong> if not set.</p><h3 id="$VISUAL"><a href="#GUI::Editors_0" class="u" title="go to top of document">$VISUAL</a></h3>
+<p>The value of the <strong><code>%*ENV«VISUAL»</code></strong> environment variable or <strong><code>''</code></strong> if not set.</p><h3 id="$EDITOR"><a href="#GUI::Editors_0" class="u" title="go to top of document">$EDITOR</a></h3>
+<p>The value of the <strong><code>%*ENV«EDITOR»</code></strong> environment variable or <strong><code>''</code></strong> if not set.</p><pre class="pod-block-code">my Str:D $GUI_EDITOR = ((%*ENV&lt;GUI_EDITOR&gt;:exists) ?? ~%*ENV&lt;GUI_EDITOR&gt; !! '');
+my Str:D $VISUAL     = ((%*ENV&lt;VISUAL&gt;:exists) ?? ~%*ENV&lt;VISUAL&gt; !! '');
+my Str:D $EDITOR     = ((%*ENV&lt;EDITOR&gt;:exists) ?? ~%*ENV&lt;EDITOR&gt; !! '');
+
+sub GUI_EDITOR( --&gt; Str:D) is export {
+    return $GUI_EDITOR;
+}
+
+sub VISUAL( --&gt; Str:D) is export {
+    return $VISUAL;
+}
+
+sub EDITOR( --&gt; Str:D) is export {
+    return $EDITOR;
+}
+
+</pre><h3 id="@GUIEDITORS"><a href="#GUI::Editors_0" class="u" title="go to top of document">@GUIEDITORS</a></h3>
+<p>The Array of Hashes that the <strong><code>Editors</code></strong> grammar and <strong><code>EditorsActions</code></strong> generate from parsing the <strong>editors</strong> file.</p><h3 id="@gui-editors"><a href="#GUI::Editors_0" class="u" title="go to top of document">@gui-editors</a></h3>
+<p>The Array of GUI Editors defined in the <strong>editors</strong> file.</p><h3 id="@default-editors"><a href="#GUI::Editors_0" class="u" title="go to top of document">@default-editors</a></h3>
+<p>The array of <strong>editors</strong> selected in the file should have only <strong>one</strong> element otherwise the file is miss configured.</p><pre class="pod-block-code">my Hash @GUIEDITORS;
+my Str:D @gui-editors;
+my Str:D @default-editors;
+
+sub GUIEDITORS( --&gt; Array[Hash]) is export {
+    return @GUIEDITORS;
+}
+
+sub gui-editors( --&gt; Array[Str:D]) is export {
+    return @gui-editors;
+}
+
+sub default-editors( --&gt; Array[Str:D]) is export {
+    return @default-editors;
+}
+
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T06:37:53Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T09:06:33Z</span></div></footer>
 	</body>
 </html>
 

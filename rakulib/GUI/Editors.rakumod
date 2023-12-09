@@ -20,7 +20,12 @@ Table of Contents
 =item1 L<$editor-config|#editor-config>
 =item1 L<@config-files|#config-files>
 =item1 L<grammar Editors|#grammar-editors>
-=item1 L<Introduction|#introduction>
+=item1 L<$GUI_EDITOR|#gui_editor>
+=item1 L<$VISUAL|#visual>
+=item1 L<$EDITOR|#editor>
+=item1 L<@GUIEDITORS|#guieditors>
+=item1 L<@gui-editors|#gui-editors>
+=item1 L<@default-editors|#default-editors>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
 
@@ -444,19 +449,123 @@ class EditorsActions is export {
     }
 } # class EditorsActions #
 
-our $GUI_EDITOR is export = ((%*ENV<GUI_EDITOR>:exists) ?? ~%*ENV<GUI_EDITOR> !! '');
-our $VISUAL is export = ((%*ENV<VISUAL>:exists) ?? ~%*ENV<VISUAL> !! '');
-our $EDITOR is export = ((%*ENV<EDITOR>:exists) ?? ~%*ENV<EDITOR> !! '');
+=begin pod
 
-our @GUIEDITORS is export;
-our @gui-editors is export;
-our @default-editors is export;
+=head2 Some useful variables.
+
+=head3 $GUI_EDITOR
+
+The value of the B<C<%*ENV«GUI_EDITOR»>> environment variable or B<C<''>> if not set.
+
+=head3 $VISUAL
+
+The value of the B<C<%*ENV«VISUAL»>> environment variable or B<C<''>> if not set.
+
+=head3 $EDITOR
+
+The value of the B<C<%*ENV«EDITOR»>> environment variable or B<C<''>> if not set.
+
+=begin code :lang<raku>
+
+my Str:D $GUI_EDITOR = ((%*ENV<GUI_EDITOR>:exists) ?? ~%*ENV<GUI_EDITOR> !! '');
+my Str:D $VISUAL     = ((%*ENV<VISUAL>:exists) ?? ~%*ENV<VISUAL> !! '');
+my Str:D $EDITOR     = ((%*ENV<EDITOR>:exists) ?? ~%*ENV<EDITOR> !! '');
+
+sub GUI_EDITOR( --> Str:D) is export {
+    return $GUI_EDITOR;
+}
+
+sub VISUAL( --> Str:D) is export {
+    return $VISUAL;
+}
+
+sub EDITOR( --> Str:D) is export {
+    return $EDITOR;
+}
+
+=end code
+
+=head3 @GUIEDITORS
+
+The Array of Hashes that the B<C<Editors>> grammar and B<C<EditorsActions>> generate from parsing the B<editors> file.
+
+=head3 @gui-editors
+
+The Array of GUI Editors defined in the B<editors> file.
+
+=head3 @default-editors
+
+The array of B<editors> selected in the file should have only B<one> element otherwise the file is miss configured.
+
+=begin code :lang<raku>
+
+my Hash @GUIEDITORS;
+my Str:D @gui-editors;
+my Str:D @default-editors;
+
+sub GUIEDITORS( --> Array[Hash]) is export {
+    return @GUIEDITORS;
+}
+
+sub gui-editors( --> Array[Str:D]) is export {
+    return @gui-editors;
+}
+
+sub default-editors( --> Array[Str:D]) is export {
+    return @default-editors;
+}
+
+=end code
+
+L<Top of Document|#table-of-contents>
+
+=end pod
+
+my Str:D $GUI_EDITOR = ((%*ENV<GUI_EDITOR>:exists) ?? ~%*ENV<GUI_EDITOR> !! '');
+my Str:D $VISUAL     = ((%*ENV<VISUAL>:exists) ?? ~%*ENV<VISUAL> !! '');
+my Str:D $EDITOR     = ((%*ENV<EDITOR>:exists) ?? ~%*ENV<EDITOR> !! '');
+
+sub GUI_EDITOR( --> Str:D) is export {
+    return $GUI_EDITOR;
+}
+
+sub VISUAL( --> Str:D) is export {
+    return $VISUAL;
+}
+
+sub EDITOR( --> Str:D) is export {
+    return $EDITOR;
+}
+
+my Hash @GUIEDITORS;
+my Str:D @gui-editors;
+my Str:D @default-editors;
+
+sub GUIEDITORS( --> Array[Hash]) is export {
+    return @GUIEDITORS;
+}
+
+sub gui-editors( --> Array[Str:D]) is export {
+    return @gui-editors;
+}
+
+sub default-editors( --> Array[Str:D]) is export {
+    return @default-editors;
+}
 
 my Bool:D $please-edit = False;
 
-our @override-gui_editor is export;
+my Bool:D @override-gui_editor;
+
+sub override-gui_editor( --> Array[Bool:D]) is export {
+    return @override-gui_editor;
+}
 
 my Bool:D $override-GUI_EDITOR = False;
+
+sub override-GUI_EDITOR( --> Bool:D) is export {
+    return $override-GUI_EDITOR;
+}
 
 # the editor to use #
 my Str $editor = '';

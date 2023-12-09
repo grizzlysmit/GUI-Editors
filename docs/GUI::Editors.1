@@ -23,7 +23,17 @@ $editor\-config [#editor-config]
 .IP \(bu 2m
 grammar Editors [#grammar-editors]
 .IP \(bu 2m
-Introduction [#introduction]
+$GUI_EDITOR [#gui_editor]
+.IP \(bu 2m
+$VISUAL [#visual]
+.IP \(bu 2m
+$EDITOR [#editor]
+.IP \(bu 2m
+@GUIEDITORS [#guieditors]
+.IP \(bu 2m
+@gui\-editors [#gui-editors]
+.IP \(bu 2m
+@default\-editors [#default-editors]
 .IP \(bu 2m
 Introduction [#introduction]
 .IP \(bu 2m
@@ -131,6 +141,71 @@ class EditorsActions is export {
         $made\&.make: @top;
     }
 } # class EditorsActions #
+
+
+.EE
+.RE
+.P
+Top of Document [#table-of-contents]
+.SS Some useful variables\&.
+.SS $GUI_EDITOR
+
+The value of the \fB%*ENV«GUI_EDITOR»\fR environment variable or \fB''\fR if not set\&.
+.SS $VISUAL
+
+The value of the \fB%*ENV«VISUAL»\fR environment variable or \fB''\fR if not set\&.
+.SS $EDITOR
+
+The value of the \fB%*ENV«EDITOR»\fR environment variable or \fB''\fR if not set\&.
+
+.RS 4m
+.EX
+my Str:D $GUI_EDITOR = ((%*ENV<GUI_EDITOR>:exists) ?? ~%*ENV<GUI_EDITOR> !! '');
+my Str:D $VISUAL     = ((%*ENV<VISUAL>:exists) ?? ~%*ENV<VISUAL> !! '');
+my Str:D $EDITOR     = ((%*ENV<EDITOR>:exists) ?? ~%*ENV<EDITOR> !! '');
+
+sub GUI_EDITOR( \-\-> Str:D) is export {
+    return $GUI_EDITOR;
+}
+
+sub VISUAL( \-\-> Str:D) is export {
+    return $VISUAL;
+}
+
+sub EDITOR( \-\-> Str:D) is export {
+    return $EDITOR;
+}
+
+
+.EE
+.RE
+.SS @GUIEDITORS
+
+The Array of Hashes that the \fBEditors\fR grammar and \fBEditorsActions\fR generate from parsing the \fBeditors\fR file\&.
+.SS @gui\-editors
+
+The Array of GUI Editors defined in the \fBeditors\fR file\&.
+.SS @default\-editors
+
+The array of \fBeditors\fR selected in the file should have only \fBone\fR element otherwise the file is miss configured\&.
+
+.RS 4m
+.EX
+my Hash @GUIEDITORS;
+my Str:D @gui\-editors;
+my Str:D @default\-editors;
+
+sub GUIEDITORS( \-\-> Array[Hash]) is export {
+    return @GUIEDITORS;
+}
+
+sub gui\-editors( \-\-> Array[Str:D]) is export {
+    return @gui\-editors;
+}
+
+sub default\-editors( \-\-> Array[Str:D]) is export {
+    return @default\-editors;
+}
 
 
 .EE
