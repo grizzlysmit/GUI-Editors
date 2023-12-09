@@ -334,3 +334,19 @@ if $override\-GUI_EDITOR && @default\-editors {
 .RE
 .P
 Top of Document [#table-of-contents]
+.SS $editor
+
+The editor the user has chosen\&.
+
+.RS 4m
+.EX
+# the editor to use #
+my Str:D $editor = '';
+
+sub editor( \-\-> Str:D) is export {
+    return $editor;
+}
+
+
+.EE
+.RE

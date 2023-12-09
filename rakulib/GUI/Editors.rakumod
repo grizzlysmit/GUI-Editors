@@ -655,6 +655,21 @@ if $override-GUI_EDITOR && @default-editors {
 
 L<Top of Document|#table-of-contents>
 
+=head3 $editor
+
+The editor the user has chosen.
+
+=begin code :lang<raku>
+
+# the editor to use #
+my Str:D $editor = '';
+
+sub editor( --> Str:D) is export {
+    return $editor;
+}
+
+=end code
+
 =end pod
 
 my Bool:D @override-gui_editor;
@@ -670,7 +685,12 @@ sub override-GUI_EDITOR( --> Bool:D) is export {
 }
 
 # the editor to use #
-my Str $editor = '';
+my Str:D $editor = '';
+
+sub editor( --> Str:D) is export {
+    return $editor;
+}
+
 my Bool:D $editor-guessed = False;
 if %*ENV<GUI_EDITOR>:exists {
     $editor = %*ENV<GUI_EDITOR>.Str();

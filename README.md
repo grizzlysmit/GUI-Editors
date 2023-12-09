@@ -316,3 +316,16 @@ if $override-GUI_EDITOR && @default-editors {
 
 [Top of Document](#table-of-contents)
 
+### $editor
+
+The editor the user has chosen.
+
+```raku
+# the editor to use #
+my Str:D $editor = '';
+
+sub editor( --> Str:D) is export {
+    return $editor;
+}
+```
+
