@@ -606,7 +606,7 @@ footer {
 <h1 id="Name"><a href="#___top" class="u" title="go to top of document">NAME</a></h1>
 <p>GUI::Editors </p>
 </section>
-<h1 id="Introduction"><a href="#GUI::Editors_0" class="u" title="go to top of document">Introduction</a></h1>
+<p><a href="#table-of-contents">Top of Document</a></p><h1 id="Introduction"><a href="#GUI::Editors_0" class="u" title="go to top of document">Introduction</a></h1>
 <p>A <strong>Raku</strong> module for managing the users GUI Editor preferences in a variety of programs. </p></section><section name="pod"><h2 id="$editor-config"><a href="#GUI::Editors_0" class="u" title="go to top of document">$editor-config</a></h2>
 <p>A constant which contains the location of the users editors file</p><pre class="pod-block-code"># the home dir #
 constant $home = %*ENV&lt;HOME&gt;.Str();
@@ -614,7 +614,7 @@ constant $home = %*ENV&lt;HOME&gt;.Str();
 # config files
 constant $editor-config is export = &quot;$home/.local/share/gui-editors&quot;;
 
-</pre><p><strong>NB: the <code>$home</code> is the value of the users HOME environment variable.</strong></p></section><section name="pod"><h2 id="@config-files"><a href="#GUI::Editors_0" class="u" title="go to top of document">@config-files</a></h2>
+</pre><p><strong>NB: the <code>$home</code> is the value of the users HOME environment variable.</strong></p><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="@config-files"><a href="#GUI::Editors_0" class="u" title="go to top of document">@config-files</a></h2>
 <p>An array containing the configuration files of the program, by default it is set to contain <strong>editors</strong> the editors configuration file the remainder should be added by <strong><code>init-gui-editors(...)</code></strong> the initialization procedure for the module.</p><pre class="pod-block-code"># The config files to test for #
 my Str:D @config-files = qw{editors};
 
@@ -629,8 +629,8 @@ sub guieditors( --&gt; Array[Str:D]) is export {
     return @guieditors;
 }
 
-</pre></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T05:54:41Z</span></div></footer>
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T06:01:13Z</span></div></footer>
 	</body>
 </html>
 

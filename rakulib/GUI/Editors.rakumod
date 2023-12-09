@@ -30,6 +30,7 @@ Table of Contents
 =TITLE GUI::Editors
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
+L<Top of Document|#table-of-contents>
 
 =head1 Introduction
 
@@ -77,6 +78,8 @@ constant $editor-config is export = "$home/.local/share/gui-editors";
 =end code
 
 B<NB: the C<$home> is the value of the users HOME environment variable.>
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 
@@ -131,6 +134,8 @@ sub guieditors( --> Array[Str:D]) is export {
 }
 
 =end code
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 

@@ -55,6 +55,8 @@ SUBTITLE
 
 A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
+[Top of Document](#table-of-contents)
+
 Introduction
 ============
 
@@ -74,6 +76,8 @@ constant $editor-config is export = "$home/.local/share/gui-editors";
 ```
 
 **NB: the `$home` is the value of the users HOME environment variable.**
+
+[Top of Document](#table-of-contents)
 
 @config-files
 -------------
@@ -101,4 +105,6 @@ sub guieditors( --> Array[Str:D]) is export {
     return @guieditors;
 }
 ```
+
+[Top of Document](#table-of-contents)
 

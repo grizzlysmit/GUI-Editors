@@ -38,6 +38,8 @@ Francis Grizzly Smit (grizzly@smit\&.id\&.au)
 GUI::Editors
 .SH "SUBTITLE"
 A Raku module for managing the users GUI Editor preferences in a variety of programs\&.
+
+Top of Document [#table-of-contents]
 .SH Introduction
 
 A \fBRaku\fR module for managing the users GUI Editor preferences in a variety of programs\&. 
@@ -58,6 +60,8 @@ constant $editor\-config is export = "$home/\&.local/share/gui\-editors";
 .RE
 .P
 \fBNB: the $home is the value of the users HOME environment variable\&.\fR
+
+Top of Document [#table-of-contents]
 .SS @config\-files
 
 An array containing the configuration files of the program, by default it is set to contain \fBeditors\fR the editors configuration file the remainder should be added by \fBinit\-gui\-editors(\&.\&.\&.)\fR the initialization procedure for the module\&.
@@ -89,3 +93,5 @@ sub guieditors( \-\-> Array[Str:D]) is export {
 
 .EE
 .RE
+.P
+Top of Document [#table-of-contents]
