@@ -17,6 +17,12 @@ Table of Contents
 =item1 L<SUBTITLE|#subtitle>
 =item1 L<COPYRIGHT|#copyright>
 =item1 L<Introduction|#introduction>
+=item1 L<$editor-config|#editor-config>
+=item1 L<@config-files|#config-files>
+=item1 L<Introduction|#introduction>
+=item1 L<Introduction|#introduction>
+=item1 L<Introduction|#introduction>
+=item1 L<Introduction|#introduction>
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
@@ -27,20 +33,52 @@ Table of Contents
 
 =head1 Introduction
 
-A Raku module for managing the users GUI Editor preferences in a variety of programs. 
+A B<Raku> module for managing the users GUI Editor preferences in a variety of programs. 
 
 =end pod
 
 use Terminal::ANSI::OO :t;
 use Terminal::Width;
 use Terminal::WCWidth;
-#use Grammar::Debugger;
+
+INIT my $debug = False;
+####################################
+#                                  #
+#  To turn On or Off debuggging    #
+#  Comment or Uncomment this       #
+#  following line.                 #
+#                                  #
+####################################
+#INIT $debug = True; use Grammar::Debugger;
+
 #use Grammar::Tracer;
+INIT "Grammar::Debugger is on".say if $debug;
+
 use Gzz::Text::Utils;
 use Syntax::Highlighters;
 
 # the home dir #
 constant $home = %*ENV<HOME>.Str();
+
+=begin pod
+
+=head2 $editor-config
+
+A constant which contains the location of the users editors file
+
+=begin code :lang<raku>
+
+# the home dir #
+constant $home = %*ENV<HOME>.Str();
+
+# config files
+constant $editor-config is export = "$home/.local/share/gui-editors";
+
+=end code
+
+B<NB: the C<$home> is the value of the users HOME environment variable.>
+
+=end pod
 
 # config files
 constant $editor-config is export = "$home/.local/share/gui-editors";
@@ -49,10 +87,58 @@ if $editor-config.IO !~~ :d {
     $editor-config.IO.mkdir();
 }
 
-# The config files to test for #
-our @config-files is export = qw{editors};
+=begin pod
 
-our @guieditors is export;
+=head2 @config-files
+
+An array containing the configuration files of the program, by default it
+is set to contain B<editors> the editors configuration file the remainder
+should be added by B«C«init-gui-editors(...)»» the initialization procedure
+for the module.
+
+=begin code :lang<raku>
+
+# The config files to test for #
+my Str:D @config-files = qw{editors};
+
+sub config-files( --> Array[Str:D]) is export {
+    return @config-files;
+}
+
+=end code
+
+=end pod
+
+# The config files to test for #
+my Str:D @config-files = qw{editors};
+
+sub config-files( --> Array[Str:D]) is export {
+    return @config-files;
+}
+
+=begin pod
+
+=head2 @guieditors
+
+An array of known B<GUI> editors. 
+
+=begin code :lang<raku>
+
+my Str:D @guieditors;
+
+sub guieditors( --> Array[Str:D]) is export {
+    return @guieditors;
+}
+
+=end code
+
+=end pod
+
+my Str:D @guieditors;
+
+sub guieditors( --> Array[Str:D]) is export {
+    return @guieditors;
+}
 
 my &generate-local-configs;
 
@@ -398,22 +484,22 @@ sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen
                     try {
                         CATCH {
                             when X::IO::Copy { 
-                                "could not copy /etc/skel/.local/share/gui-editors/$file -> $editor-config/$file".say;
+                                $*ERR.say: "could not copy /etc/skel/.local/share/gui-editors/$file -> $editor-config/$file";
                                 my Bool $r = generate-configs($file); 
                                 $result ?&= $r;
                             }
                         }
                         my Bool $r = "/etc/skel/.local/share/gui-editors/$file".IO.copy("$editor-config/$file".IO, :createonly);
                         if $r {
-                            "copied /etc/skel/.local/share/gui-editors/$file -> $editor-config/$file".say;
+                            $*ERR.say: "copied /etc/skel/.local/share/gui-editors/$file -> $editor-config/$file";
                         } else {
-                            "could not copy /etc/skel/.local/share/gui-editors/$file -> $editor-config/$file".say;
+                            $*ERR.say: "could not copy /etc/skel/.local/share/gui-editors/$file -> $editor-config/$file";
                         }
                         $result ?&= $r;
                     }
                 } else {
                     my Bool $r = generate-configs($file);
-                    "generated $editor-config/$file".say if $r;
+                    $*ERR.say: "generated $editor-config/$file" if $r;
                     $result ?&= $r;
                 }
             }
@@ -467,7 +553,8 @@ sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen
         $editor = @default-editors[@default-editors - 1];
     }
     return $result;
-} # sub init-gui-editors(Str:D @client-config-files, Code &gen-configs:(Str:D --> Bool) --> bool) is  export #
+} #`««« sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D),
+                                                            &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is  export »»»
 
 #`«««
     ##################################

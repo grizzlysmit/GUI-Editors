@@ -1,1 +1,5 @@
 .*.swp
+.test/
+archive/
+scratch/
+rakulib/.precomp/

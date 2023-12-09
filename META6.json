@@ -1,23 +1,28 @@
 {
-    "name" : "Gzz::Text::Utils",
+    "name" : "GUI::Editors",
     "description" : "A Raku module for managing the users GUI Editor preferences in a variety of programs.",
     "perl" : "6.d",
-    "license" : "LGPL-v3.0",
+    "license" : "LGPL-3.0-or-later",
     "authors" : [
         "Francis Grizzly Smit <grizzly@smit.id.au>"
     ],
     "depends": [
+        "Terminal::ANSI",
         "Terminal::Width",
-        "Terminal::WCWidth"
+        "Terminal::WCWidth",
+        "Gzz::Text::Utils",
+        "Syntax::Highlighters"
     ],
     "provides" : {
-        "Gzz::Text::Utils" : "rakulib/Gzz/Text/Utils.rakumod"
+        "GUI::Editors" : "rakulib/GUI/Editors.rakumod"
     },
-    "source-url" : "git@github.com:grizzlysmit/Gzz-Text-Utils.git",
+    "source-url" : "https://github.com/grizzlysmit/GUI-Editors.git",
     "support" : {
-        "source" : "git@github.com:grizzlysmit/Gzz-Text-Utils.git"
+        "source" : "https://github.com/grizzlysmit/GUI-Editors.git",
+        "email" : "grizzly@smit.id.au",
+        "bugtracker" : "https://github.com/grizzlysmit/GUI-Editors/issues"
     },
     "auth": "zef:grizzlysmit",
     "version" : "0.1.0",
-    "tags" : [ "text", "formatting", "sprintf clone", "ANSI", "highlighted" ]
+    "tags" : [ "preferences", "Editors", "GUI", "user" ]
 }

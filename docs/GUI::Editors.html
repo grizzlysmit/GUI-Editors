@@ -581,6 +581,9 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#Table_of_Contents">Table of Contents</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#Name">Name</a></td></tr>
  <tr class="toc-level-1"><td class="toc-text"><a href="#Introduction">Introduction</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#$editor-config">$editor-config</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#@config-files">@config-files</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#@guieditors">@guieditors</a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
 <h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
@@ -592,14 +595,42 @@ footer {
 <li><p><a href="#subtitle">SUBTITLE</a></p></li>
 <li><p><a href="#copyright">COPYRIGHT</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#editor-config">$editor-config</a></p></li>
+<li><p><a href="#config-files">@config-files</a></p></li>
+<li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#introduction">Introduction</a></p></li>
 </ul>
 <section>
 <h1 id="Name"><a href="#___top" class="u" title="go to top of document">NAME</a></h1>
 <p>GUI::Editors </p>
 </section>
 <h1 id="Introduction"><a href="#GUI::Editors_0" class="u" title="go to top of document">Introduction</a></h1>
-<p>A Raku module for managing the users GUI Editor preferences in a variety of programs. </p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-06T18:49:01Z</span></div></footer>
+<p>A <strong>Raku</strong> module for managing the users GUI Editor preferences in a variety of programs. </p></section><section name="pod"><h2 id="$editor-config"><a href="#GUI::Editors_0" class="u" title="go to top of document">$editor-config</a></h2>
+<p>A constant which contains the location of the users editors file</p><pre class="pod-block-code"># the home dir #
+constant $home = %*ENV&lt;HOME&gt;.Str();
+
+# config files
+constant $editor-config is export = &quot;$home/.local/share/gui-editors&quot;;
+
+</pre><p><strong>NB: the <code>$home</code> is the value of the users HOME environment variable.</strong></p></section><section name="pod"><h2 id="@config-files"><a href="#GUI::Editors_0" class="u" title="go to top of document">@config-files</a></h2>
+<p>An array containing the configuration files of the program, by default it is set to contain <strong>editors</strong> the editors configuration file the remainder should be added by <strong><code>init-gui-editors(...)</code></strong> the initialization procedure for the module.</p><pre class="pod-block-code"># The config files to test for #
+my Str:D @config-files = qw{editors};
+
+sub config-files( --&gt; Array[Str:D]) is export {
+    return @config-files;
+}
+
+</pre></section><section name="pod"><h2 id="@guieditors"><a href="#GUI::Editors_0" class="u" title="go to top of document">@guieditors</a></h2>
+<p>An array of known <strong>GUI</strong> editors. </p><pre class="pod-block-code">my Str:D @guieditors;
+
+sub guieditors( --&gt; Array[Str:D]) is export {
+    return @guieditors;
+}
+
+</pre></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T05:54:41Z</span></div></footer>
 	</body>
 </html>
 

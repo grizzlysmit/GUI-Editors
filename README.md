@@ -18,6 +18,18 @@ Table of Contents
 
   * [Introduction](#introduction)
 
+  * [$editor-config](#editor-config)
+
+  * [@config-files](#config-files)
+
+  * [Introduction](#introduction)
+
+  * [Introduction](#introduction)
+
+  * [Introduction](#introduction)
+
+  * [Introduction](#introduction)
+
 NAME
 ====
 
@@ -46,5 +58,47 @@ A Raku module for managing the users GUI Editor preferences in a variety of prog
 Introduction
 ============
 
-A Raku module for managing the users GUI Editor preferences in a variety of programs. 
+A **Raku** module for managing the users GUI Editor preferences in a variety of programs. 
+
+$editor-config
+--------------
+
+A constant which contains the location of the users editors file
+
+```raku
+# the home dir #
+constant $home = %*ENV<HOME>.Str();
+
+# config files
+constant $editor-config is export = "$home/.local/share/gui-editors";
+```
+
+**NB: the `$home` is the value of the users HOME environment variable.**
+
+@config-files
+-------------
+
+An array containing the configuration files of the program, by default it is set to contain **editors** the editors configuration file the remainder should be added by **`init-gui-editors(...)`** the initialization procedure for the module.
+
+```raku
+# The config files to test for #
+my Str:D @config-files = qw{editors};
+
+sub config-files( --> Array[Str:D]) is export {
+    return @config-files;
+}
+```
+
+@guieditors
+-----------
+
+An array of known **GUI** editors. 
+
+```raku
+my Str:D @guieditors;
+
+sub guieditors( --> Array[Str:D]) is export {
+    return @guieditors;
+}
+```
 
