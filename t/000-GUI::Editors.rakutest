@@ -1,0 +1,124 @@
+use v6;
+use lib 'lib';
+use Test;
+
+use GUI::Editors;
+
+# config files
+constant $config is export = ".test/syscon";
+
+if $config.IO !~~ :d {
+    $config.IO.mkdir();
+}
+
+# The config files to test for #
+my Str @host-config-files = |qw{hosts.h_ts};
+
+my Str $client-config;
+
+sub generate-configs(Str:D $file, Str:D $config) returns Bool:D {
+    my Bool $result = True;
+    CATCH {
+        default { 
+                $*ERR.say: .message; 
+                $*ERR.say: "some kind of IO exception was caught!"; 
+                $*ERR.say: .WHAT.^name;
+                my Str $content;
+                given $file {
+                    when 'hosts.h_ts' {
+                        $content = q:to/END/;
+                        #mappings #
+                        ex         =>  fred@example.com :  22     # example entry
+
+                        END
+                    }
+                }
+                $content .=trim-trailing;
+                if "$config/$file".IO !~~ :e || "$config/$file".IO.s == 0 {
+                    "$config/$file".IO.spurt: $content, :append;
+                }
+                return True;
+           }
+    }
+    my IO::CatHandle $fd = "$config/$file".IO.open: :w;
+    given $file {
+        when 'hosts.h_ts' {
+            my Str $content = q:to/END/;
+            #mappings #
+            ex         =>  fred@example.com :  22     # example entry
+
+            END
+            $content .=trim-trailing;
+            my Bool $r = $fd.put: $content;
+            $*ERR.say: "could not write $config/$file" if ! $r;
+            $result ?&= $r;
+            if !$result {
+                "$config/$file".IO.spurt: $content, :append;
+            }
+        }
+    } # given $file #
+    my Bool $r = $fd.close;
+    $*ERR.say: "error closing file: $config/$file" if ! $r;
+    $result ?&= $r;
+    return $result;
+} # sub generate-configs(Str:D $file, Str:D $config) returns Bool:D #
+
+my Bool:D $please-edit = False;
+
+sub check-files(Str:D @cfg-files, Str:D $config --> Bool:D) {
+    my Bool $result = True;
+    for @cfg-files -> $file {
+        if "$config/$file".IO !~~ :e || "$config/$file".IO.s == 0 {
+            $please-edit = True;
+            if "/etc/skel/.local/share/syscon/$file".IO ~~ :f {
+                try {
+                    CATCH {
+                        when X::IO::Copy { 
+                            $*ERR.say: "could not copy /etc/skel/.local/share/syscon/$file -> $config/$file";
+                            my Bool $r = generate-configs($file, $config); 
+                            $result ?&= $r;
+                        }
+                    }
+                    my Bool $r = "/etc/skel/.local/share/syscon/$file".IO.copy("$config/$file".IO);
+                    if $r {
+                        $*ERR.say: "copied /etc/skel/.local/share/syscon/$file -> $config/$file";
+                    } else {
+                        $*ERR.say: "could not copy /etc/skel/.local/share/syscon/$file -> $config/$file";
+                    }
+                    $result ?&= $r;
+                }
+            } else {
+                my Bool $r = generate-configs($file, $config);
+                $*ERR.say: "generated $config/$file" if $r;
+                $result ?&= $r;
+            }
+        }
+    } # for @cfg-files -> $file # 
+    return $result;
+}
+
+plan 14;
+
+is(init-gui-editors(@host-config-files, $config, &generate-configs, &check-files), True, "init-gui-editors succeded");
+
+lives-ok({ editors-stats(False, False), Nil}, "editors-stats(False, False)");
+lives-ok({ editors-stats(True, False), Nil},  "editors-stats(True, False)");
+lives-ok({ editors-stats(False, True), Nil},  "editors-stats(False, True)");
+lives-ok({ editors-stats(True, True), Nil},   "editors-stats(True, True)");
+
+lives-ok({ list-editors(False, False), Nil}, "list-editors(False, False)");
+lives-ok({ list-editors(True, False), Nil},  "list-editors(True, False)");
+lives-ok({ list-editors(False, True), Nil},  "list-editors(False, True)");
+lives-ok({ list-editors(True, True), Nil},   "list-editors(True, True)");
+
+lives-ok({ list-editors-file(False, False), Nil}, "list-editors-file(False, False)");
+lives-ok({ list-editors-file(True, False), Nil},  "list-editors-file(True, False)");
+lives-ok({ list-editors-file(False, True), Nil},  "list-editors-file(False, True)");
+lives-ok({ list-editors-file(True, True), Nil},   "list-editors-file(True, True)");
+
+my Str:D @expected-config-files = qw[editors];
+@expected-config-files.append(@host-config-files);
+
+is(config-files(), @expected-config-files, "config-files gave correct result of: " ~ @expected-config-files.raku());
+
+done-testing;
