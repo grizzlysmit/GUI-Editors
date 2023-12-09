@@ -22,7 +22,7 @@ Table of Contents
 
   * [@config-files](#config-files)
 
-  * [Introduction](#introduction)
+  * [grammar Editors](#grammar-editors)
 
   * [Introduction](#introduction)
 

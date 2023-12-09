@@ -19,7 +19,7 @@ Table of Contents
 =item1 L<Introduction|#introduction>
 =item1 L<$editor-config|#editor-config>
 =item1 L<@config-files|#config-files>
-=item1 L<Introduction|#introduction>
+=item1 L<grammar Editors|#grammar-editors>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
