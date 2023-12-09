@@ -42,7 +42,7 @@ Table of Contents
 
     * [$override-GUI_EDITOR](#override-gui_editor-1)
 
-  * [Introduction](#introduction)
+      * [In **`init-gui-editors`**](#in-bcinit-gui-editors)
 
   * [Introduction](#introduction)
 
@@ -261,7 +261,7 @@ sub override-GUI_EDITOR( --> Bool:D) is export {
 
 [Top of Document](#table-of-contents)
 
-In **`init-gui-editors`** 
+#### In **`init-gui-editors`** 
 
 ```raku
 sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path,

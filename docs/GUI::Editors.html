@@ -594,6 +594,7 @@ footer {
  <tr class="toc-level-3"><td class="toc-text"><a href="#@default-editors">@default-editors</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#@override-gui_editor">@override-gui_editor</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#$override-GUI_EDITOR">$override-GUI_EDITOR</a></td></tr>
+ <tr class="toc-level-4"><td class="toc-text"><a href="#In_init-gui-editors_">In init-gui-editors </a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
 <h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
@@ -618,8 +619,10 @@ footer {
 <li><p><a href="#default-editors">@default-editors</a></p></li>
 <li><p><a href="#override-gui_editor">@override-gui_editor</a></p></li>
 <li><p><a href="#override-gui_editor-1">$override-GUI_EDITOR</a></p></li>
+<ul>
+<li><p><a href="#in-bcinit-gui-editors">In <strong><code>init-gui-editors</code></strong></a></p></li>
 </ul>
-<li><p><a href="#introduction">Introduction</a></p></li>
+</ul>
 <li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
@@ -738,7 +741,8 @@ sub override-GUI_EDITOR( --&gt; Bool:D) is export {
     return $override-GUI_EDITOR;
 }
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p><p>In <strong><code>init-gui-editors</code></strong> </p><pre class="pod-block-code">sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path,
+</pre><p><a href="#table-of-contents">Top of Document</a></p><h4 id="In_init-gui-editors_"><a href="#GUI::Editors_0" class="u" title="go to top of document">In <strong><code>init-gui-editors</code></strong> </a></h4>
+<pre class="pod-block-code">sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path,
                               &amp;gen-configs:(Str:D, Str:D --&gt; Bool:D),
                                   &amp;check:(Str:D @cfg-files, Str:D $config --&gt; Bool:D)
                                                                     --&gt; Bool:D) is  export
@@ -780,7 +784,7 @@ if $override-GUI_EDITOR &amp;&amp; @default-editors {
 }
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T18:04:02Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T18:07:14Z</span></div></footer>
 	</body>
 </html>
 

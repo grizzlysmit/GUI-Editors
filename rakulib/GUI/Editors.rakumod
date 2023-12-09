@@ -29,7 +29,7 @@ Table of Contents
 =item2 L<@default-editors|#default-editors>
 =item2 L<@override-gui_editor|#override-gui_editor>
 =item2 L<$override-GUI_EDITOR|#override-gui_editor-1>
-=item1 L<Introduction|#introduction>
+=item3 L<In B«C«init-gui-editors»»|#in-bcinit-gui-editors>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
 =item1 L<Introduction|#introduction>
@@ -597,7 +597,7 @@ sub override-GUI_EDITOR( --> Bool:D) is export {
 
 L<Top of Document|#table-of-contents>
 
-In B«C«init-gui-editors»» 
+=head4 In B«C«init-gui-editors»» 
 
 =begin code :lang<raku>
 
