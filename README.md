@@ -227,7 +227,36 @@ sub default-editors( --> Array[Str:D]) is export {
 
 [Top of Document](#table-of-contents)
 
-In **`sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D), &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is export`** 
+### @override-gui_editor
+
+An array of **True** values one for each of the times the **`override GUI_EDITOR`** directive appears in the **editors** file, it is an error for it to appear more than once, (it's a zero or one rule).
+
+### $override-GUI_EDITOR
+
+True if the **`override GUI_EDITOR`** directive is present in the **editors** file. If **True** then the setting in the file overrides the **`%*ENV«GUI_EDITOR»`** variable, otherwise **`%*ENV«GUI_EDITOR»`** wins.
+
+```raku
+my Bool:D @override-gui_editor;
+
+sub override-gui_editor( --> Array[Bool:D]) is export {
+    return @override-gui_editor;
+}
+
+my Bool:D $override-GUI_EDITOR = False;
+
+sub override-GUI_EDITOR( --> Bool:D) is export {
+    return $override-GUI_EDITOR;
+}
+```
+
+In **`init-gui-editors`** 
+
+```raku
+sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D),
+                                           &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is  export
+```
+
+... ... ...
 
 ```raku
 @GUIEDITORS = Editors.parse(@editors-file.join("\x0A"), :enc('UTF-8'), :$actions).made;

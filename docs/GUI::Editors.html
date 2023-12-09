@@ -592,6 +592,8 @@ footer {
  <tr class="toc-level-3"><td class="toc-text"><a href="#@GUIEDITORS">@GUIEDITORS</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#@gui-editors">@gui-editors</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#@default-editors">@default-editors</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#@override-gui_editor">@override-gui_editor</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#$override-GUI_EDITOR">$override-GUI_EDITOR</a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
 <h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
@@ -718,7 +720,24 @@ sub default-editors( --&gt; Array[Str:D]) is export {
     return @default-editors;
 }
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p><p>In <strong><code>sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &amp;gen-configs:(Str:D, Str:D --&gt; Bool:D), &amp;check:(Str:D @cfg-files, Str:D $config --&gt; Bool:D) --&gt; Bool:D) is export</code></strong> </p><pre class="pod-block-code">@GUIEDITORS = Editors.parse(@editors-file.join(&quot;\x0A&quot;), :enc('UTF-8'), :$actions).made;
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="@override-gui_editor"><a href="#GUI::Editors_0" class="u" title="go to top of document">@override-gui_editor</a></h3>
+<p>An array of <strong>True</strong> values one for each of the times the <strong><code>override GUI_EDITOR</code></strong> directive appears in the <strong>editors</strong> file, it is an error for it to appear more than once, (it's a zero or one rule).</p><h3 id="$override-GUI_EDITOR"><a href="#GUI::Editors_0" class="u" title="go to top of document">$override-GUI_EDITOR</a></h3>
+<p>True if the <strong><code>override GUI_EDITOR</code></strong> directive is present in the <strong>editors</strong> file. If <strong>True</strong> then the setting in the file overrides the <strong><code>%*ENV«GUI_EDITOR»</code></strong> variable, otherwise <strong><code>%*ENV«GUI_EDITOR»</code></strong> wins.</p><pre class="pod-block-code">my Bool:D @override-gui_editor;
+
+sub override-gui_editor( --&gt; Array[Bool:D]) is export {
+    return @override-gui_editor;
+}
+
+my Bool:D $override-GUI_EDITOR = False;
+
+sub override-GUI_EDITOR( --&gt; Bool:D) is export {
+    return $override-GUI_EDITOR;
+}
+
+</pre><p>In <strong><code>init-gui-editors</code></strong> </p><pre class="pod-block-code">sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &amp;gen-configs:(Str:D, Str:D --&gt; Bool:D),
+                                           &amp;check:(Str:D @cfg-files, Str:D $config --&gt; Bool:D) --&gt; Bool:D) is  export
+
+</pre><p>... ... ...</p><pre class="pod-block-code">@GUIEDITORS = Editors.parse(@editors-file.join(&quot;\x0A&quot;), :enc('UTF-8'), :$actions).made;
 @gui-editors = @GUIEDITORS.grep( -&gt; %l { %l«type» eq 'config-line' } ).map: -&gt; %ln { %ln«value»; };
 @default-editors = @GUIEDITORS.grep( -&gt; %l { %l«type» eq 'editor-to-use' } ).map: -&gt; %ln { %ln«value»; };
 if @default-editors &gt; 1 {
@@ -734,7 +753,7 @@ if @override-gui_editor &gt; 1 {
 }
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T09:32:28Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-09T17:42:10Z</span></div></footer>
 	</body>
 </html>
 

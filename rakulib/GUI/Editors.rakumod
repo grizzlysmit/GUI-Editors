@@ -522,31 +522,6 @@ sub default-editors( --> Array[Str:D]) is export {
 
 L<Top of Document|#table-of-contents>
 
-In B«C«sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D),
-                                                            &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is  export»» 
-
-=begin code :lang<raku>
-
- 
-@GUIEDITORS = Editors.parse(@editors-file.join("\x0A"), :enc('UTF-8'), :$actions).made;
-@gui-editors = @GUIEDITORS.grep( -> %l { %l«type» eq 'config-line' } ).map: -> %ln { %ln«value»; };
-@default-editors = @GUIEDITORS.grep( -> %l { %l«type» eq 'editor-to-use' } ).map: -> %ln { %ln«value»; };
-if @default-editors > 1 {
-    $*ERR.say: "Error: file $editor-config/editors is miss configured  more than one editor defined should be 0 or 1";
-}
-@override-gui_editor = @GUIEDITORS.grep( -> %l { %l«type» eq 'override-gui_editor' } ).map: -> %ln { %ln«value»; };
-if @override-gui_editor > 1 {
-    my Int:D $elems = @override-gui_editor.elems;
-    $*ERR.say: qq[Make up your mind only one "override GUI_EDITOR" is required, you supplied $elems are you insane???];
-    $override-GUI_EDITOR = True;
-} elsif @override-gui_editor == 1 {
-    $override-GUI_EDITOR = True;
-}
-
-=end code
-
-L<Top of Document|#table-of-contents>
-
 =end pod
 
 my Str:D $GUI_EDITOR = ((%*ENV<GUI_EDITOR>:exists) ?? ~%*ENV<GUI_EDITOR> !! '');
@@ -582,6 +557,71 @@ sub default-editors( --> Array[Str:D]) is export {
 }
 
 my Bool:D $please-edit = False;
+
+=begin pod
+
+=head3 @override-gui_editor
+
+An array of B<True> values one for each of the times the B<C<override GUI_EDITOR>>
+directive appears in the B<editors> file, it is an error for it to appear more than
+once, (it's a zero or one rule).
+
+=head3 $override-GUI_EDITOR
+
+True if the B<C<override GUI_EDITOR>> directive is present in the B<editors> file.
+If B<True> then the setting in the file overrides the B<C<%*ENV«GUI_EDITOR»>> variable, 
+otherwise B<C<%*ENV«GUI_EDITOR»>> wins.
+
+=begin code :lang<raku>
+
+my Bool:D @override-gui_editor;
+
+sub override-gui_editor( --> Array[Bool:D]) is export {
+    return @override-gui_editor;
+}
+
+my Bool:D $override-GUI_EDITOR = False;
+
+sub override-GUI_EDITOR( --> Bool:D) is export {
+    return $override-GUI_EDITOR;
+}
+
+=end code
+
+In B«C«init-gui-editors»» 
+
+=begin code :lang<raku>
+
+sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D),
+                                           &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is  export
+
+=end code
+...
+...
+...
+
+=begin code :lang<raku>
+ 
+@GUIEDITORS = Editors.parse(@editors-file.join("\x0A"), :enc('UTF-8'), :$actions).made;
+@gui-editors = @GUIEDITORS.grep( -> %l { %l«type» eq 'config-line' } ).map: -> %ln { %ln«value»; };
+@default-editors = @GUIEDITORS.grep( -> %l { %l«type» eq 'editor-to-use' } ).map: -> %ln { %ln«value»; };
+if @default-editors > 1 {
+    $*ERR.say: "Error: file $editor-config/editors is miss configured  more than one editor defined should be 0 or 1";
+}
+@override-gui_editor = @GUIEDITORS.grep( -> %l { %l«type» eq 'override-gui_editor' } ).map: -> %ln { %ln«value»; };
+if @override-gui_editor > 1 {
+    my Int:D $elems = @override-gui_editor.elems;
+    $*ERR.say: qq[Make up your mind only one "override GUI_EDITOR" is required, you supplied $elems are you insane???];
+    $override-GUI_EDITOR = True;
+} elsif @override-gui_editor == 1 {
+    $override-GUI_EDITOR = True;
+}
+
+=end code
+
+L<Top of Document|#table-of-contents>
+
+=end pod
 
 my Bool:D @override-gui_editor;
 

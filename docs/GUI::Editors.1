@@ -1,5 +1,5 @@
 .pc
-.TH Editors.rakumod 1 2023-12-09
+.TH Editors.rakumod 1 2023-12-10
 .SH GUI::Editors
 .SS Table of Contents
 .IP \(bu 2m
@@ -228,8 +228,43 @@ sub default\-editors( \-\-> Array[Str:D]) is export {
 .RE
 .P
 Top of Document [#table-of-contents]
+.SS @override\-gui_editor
 
-In \fBsub init\-gui\-editors(Str:D @client\-config\-files, Str:D $client\-config\-path, &gen\-configs:(Str:D, Str:D \-\-> Bool:D), &check:(Str:D @cfg\-files, Str:D $config \-\-> Bool:D) \-\-> Bool:D) is export\fR 
+An array of \fBTrue\fR values one for each of the times the \fBoverride GUI_EDITOR\fR directive appears in the \fBeditors\fR file, it is an error for it to appear more than once, (it's a zero or one rule)\&.
+.SS $override\-GUI_EDITOR
+
+True if the \fBoverride GUI_EDITOR\fR directive is present in the \fBeditors\fR file\&. If \fBTrue\fR then the setting in the file overrides the \fB%*ENV«GUI_EDITOR»\fR variable, otherwise \fB%*ENV«GUI_EDITOR»\fR wins\&.
+
+.RS 4m
+.EX
+my Bool:D @override\-gui_editor;
+
+sub override\-gui_editor( \-\-> Array[Bool:D]) is export {
+    return @override\-gui_editor;
+}
+
+my Bool:D $override\-GUI_EDITOR = False;
+
+sub override\-GUI_EDITOR( \-\-> Bool:D) is export {
+    return $override\-GUI_EDITOR;
+}
+
+
+.EE
+.RE
+.P
+In \fBinit\-gui\-editors\fR 
+
+.RS 4m
+.EX
+sub init\-gui\-editors(Str:D @client\-config\-files, Str:D $client\-config\-path, &gen\-configs:(Str:D, Str:D \-\-> Bool:D),
+                                           &check:(Str:D @cfg\-files, Str:D $config \-\-> Bool:D) \-\-> Bool:D) is  export
+
+
+.EE
+.RE
+.P
+\&.\&.\&. \&.\&.\&. \&.\&.\&.
 
 .RS 4m
 .EX
