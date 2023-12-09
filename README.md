@@ -227,35 +227,23 @@ sub default-editors( --> Array[Str:D]) is export {
 
 [Top of Document](#table-of-contents)
 
-In **`init-gui-editors`** 
+In **`sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D), &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is export`** 
 
 ```raku
-sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D),
-                                                            &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is  export {
-    #...
-    #...
-    #...
-    #...
-    @GUIEDITORS = Editors.parse(@editors-file.join("\x0A"), :enc('UTF-8'), :$actions).made;
-    @gui-editors = @GUIEDITORS.grep( -> %l { %l«type» eq 'config-line' } ).map: -> %ln { %ln«value»; };
-    @default-editors = @GUIEDITORS.grep( -> %l { %l«type» eq 'editor-to-use' } ).map: -> %ln { %ln«value»; };
-    if @default-editors > 1 {
-        $*ERR.say: "Error: file $editor-config/editors is miss configured  more than one editor defined should be 0 or 1";
-    }
-    @override-gui_editor = @GUIEDITORS.grep( -> %l { %l«type» eq 'override-gui_editor' } ).map: -> %ln { %ln«value»; };
-    if @override-gui_editor > 1 {
-        my Int:D $elems = @override-gui_editor.elems;
-        $*ERR.say: qq[Make up your mind only one "override GUI_EDITOR" is required, you supplied $elems are you insane???];
-        $override-GUI_EDITOR = True;
-    } elsif @override-gui_editor == 1 {
-        $override-GUI_EDITOR = True;
-    }
-    #...
-    #...
-    #...
-    #...
-} #`««« sub init-gui-editors(Str:D @client-config-files, Str:D $client-config-path, &gen-configs:(Str:D, Str:D --> Bool:D),
-                                                            &check:(Str:D @cfg-files, Str:D $config --> Bool:D) --> Bool:D) is  export »»»
+@GUIEDITORS = Editors.parse(@editors-file.join("\x0A"), :enc('UTF-8'), :$actions).made;
+@gui-editors = @GUIEDITORS.grep( -> %l { %l«type» eq 'config-line' } ).map: -> %ln { %ln«value»; };
+@default-editors = @GUIEDITORS.grep( -> %l { %l«type» eq 'editor-to-use' } ).map: -> %ln { %ln«value»; };
+if @default-editors > 1 {
+    $*ERR.say: "Error: file $editor-config/editors is miss configured  more than one editor defined should be 0 or 1";
+}
+@override-gui_editor = @GUIEDITORS.grep( -> %l { %l«type» eq 'override-gui_editor' } ).map: -> %ln { %ln«value»; };
+if @override-gui_editor > 1 {
+    my Int:D $elems = @override-gui_editor.elems;
+    $*ERR.say: qq[Make up your mind only one "override GUI_EDITOR" is required, you supplied $elems are you insane???];
+    $override-GUI_EDITOR = True;
+} elsif @override-gui_editor == 1 {
+    $override-GUI_EDITOR = True;
+}
 ```
 
 [Top of Document](#table-of-contents)
