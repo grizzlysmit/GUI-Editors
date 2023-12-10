@@ -1060,7 +1060,7 @@ sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
                   '%*ENV<EDITOR>' => $EDITOR,
                   '$editor' => $editor,
                   '$override-GUI_EDITOR' => $override-GUI_EDITOR,
-                  '@default-editors' => '[ "' ~ @default-editors.join('", "') ~ '" ]', 
+                  '@default-editors' => '[ ' ~ ((@default-editors) ?? '"' ~ @default-editors.join('", "') ~ '"' !! '') ~ ' ]', 
                   '@override-gui_editor' => '[' ~ @override-gui_editor.join(', ') ~ ']';
     my Int:D $var-width        = 0;
     my Int:D $value-width      = 0;
