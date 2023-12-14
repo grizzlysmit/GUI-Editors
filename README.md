@@ -564,6 +564,8 @@ sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --> Bool:D) is exp
 
 If set then the file always wins else **`%*ENV«GUI_EDITOR»`** always wins if set.
 
+[Top of Document](#table-of-contents)
+
 ### backup-editors(…)
 
 Backup the editors file.
@@ -573,6 +575,8 @@ sub backup-editors(Bool:D $use-windows-formatting --> Bool) is export
 ```
 
 **NB: if $use-windows-formatting is true or the program is running on windows then B<<`.`** will become **`·`**> and **`:`** will become **`.`**, this is to avoid problems with the special meaning of **`:`** on windows.
+
+[Top of Document](#table-of-contents)
 
 ### restore-editors(…)
 
@@ -591,6 +595,8 @@ List all the available backups in the **`$editor-config`**.
 ```raku
 sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export
 ```
+
+[Top of Document](#table-of-contents)
 
 ### backups-menu-restore(…)
 
@@ -620,4 +626,6 @@ Edit arbitrary files using chosen editor.
 ```raku
 sub edit-files(Str:D @files --> Bool:D) is export
 ```
+
+[Top of Document](#table-of-contents)
 

@@ -960,16 +960,16 @@ sub editor( --&gt; Str:D) is export {
 </pre><p><strong>NB: please make sure it really is a GUI Editor otherwise this module will not work correctly. You are completely free to set the chosen editor to what ever you like.</strong></p></section><section name="pod"><h3 id="set-override-GUI_EDITOR(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">set-override-GUI_EDITOR(…)</a></h3>
 <p>Set or unset the <strong>override GUI_EDITOR</strong> flag.</p><pre class="pod-block-code">sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --&gt; Bool:D) is export 
 
-</pre><p>If set then the file always wins else <strong><code>%*ENV«GUI_EDITOR»</code></strong> always wins if set.</p></section><section name="pod"><h3 id="backup-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backup-editors(…)</a></h3>
+</pre><p>If set then the file always wins else <strong><code>%*ENV«GUI_EDITOR»</code></strong> always wins if set.</p><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="backup-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backup-editors(…)</a></h3>
 <p>Backup the editors file.</p><pre class="pod-block-code">sub backup-editors(Bool:D $use-windows-formatting --&gt; Bool) is export 
 
-</pre><p><strong>NB: if $use-windows-formatting is true or the program is running on windows then B&lt;&lt;<code>.</code></strong> will become <strong><code>·</code></strong>&gt; and <strong><code>:</code></strong> will become <strong><code>.</code></strong>, this is to avoid problems with the special meaning of <strong><code>:</code></strong> on windows.</p></section><section name="pod"><h3 id="restore-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">restore-editors(…)</a></h3>
+</pre><p><strong>NB: if $use-windows-formatting is true or the program is running on windows then B&lt;&lt;<code>.</code></strong> will become <strong><code>·</code></strong>&gt; and <strong><code>:</code></strong> will become <strong><code>.</code></strong>, this is to avoid problems with the special meaning of <strong><code>:</code></strong> on windows.</p></section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="restore-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">restore-editors(…)</a></h3>
 <p>Restore the editors file from a backup.</p><pre class="pod-block-code">sub restore-editors(IO::Path $restore-from --&gt; Bool) is export 
 
 </pre><p>If <strong><code>$restore-from</code></strong> is relative and not found from the current directory <strong><code>$editor-config/$restore-from</code></strong> will be tried. </p></section><section name="pod"><h3 id="list-editors-backups(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-backups(…)</a></h3>
 <p>List all the available backups in the <strong><code>$editor-config</code></strong>.</p><pre class="pod-block-code">sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --&gt; True) is export
 
-</pre></section><section name="pod"><h3 id="backups-menu-restore(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backups-menu-restore(…)</a></h3>
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="backups-menu-restore(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backups-menu-restore(…)</a></h3>
 <p>Presents a menu so you can choose which backup to restore from.</p><pre class="pod-block-code">sub backups-menu-restore(Bool:D $colour, Bool:D $syntax,
                                     Str:D $message = &quot;&quot; --&gt; Bool:D) is export 
 
@@ -989,8 +989,8 @@ sub editor( --&gt; Str:D) is export {
 <p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="edit-files(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">edit-files(…)</a></h3>
 <p>Edit arbitrary files using chosen editor.</p><pre class="pod-block-code">sub edit-files(Str:D @files --&gt; Bool:D) is export 
 
-</pre></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-14T20:50:41Z</span></div></footer>
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-14T20:56:42Z</span></div></footer>
 	</body>
 </html>
 

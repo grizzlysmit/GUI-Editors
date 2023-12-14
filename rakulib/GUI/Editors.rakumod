@@ -1507,6 +1507,8 @@ sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --> Bool:D) is exp
 
 If set then the file always wins else B<C<%*ENV«GUI_EDITOR»>> always wins if set.
 
+L<Top of Document|#table-of-contents>
+
 =end pod
 
 sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --> Bool:D) is export {
@@ -1594,6 +1596,8 @@ sub backup-editors(Bool:D $use-windows-formatting --> Bool) is export {
 
 =begin pod
 
+L<Top of Document|#table-of-contents>
+
 =head3 restore-editors(…)
 
 Restore the editors file from a backup.
@@ -1637,6 +1641,8 @@ List all the available backups in the B<C<$editor-config>>.
 sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export
 
 =end code
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 
@@ -1751,6 +1757,8 @@ Edit arbitrary files using chosen editor.
 sub edit-files(Str:D @files --> Bool:D) is export 
 
 =end code
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 
