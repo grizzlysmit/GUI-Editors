@@ -585,6 +585,7 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#@config-files">@config-files</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#@guieditors">@guieditors</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#grammar_Editors">grammar Editors</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#grammar_EditorLine_&amp;_class_EditorLineActions">grammar EditorLine &amp; class EditorLineActions</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Some_useful_variables">Some useful variables</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#$GUI_EDITOR">$GUI_EDITOR</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#$VISUAL">$VISUAL</a></td></tr>
@@ -599,8 +600,17 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#edit-configs()">edit-configs()</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Editor_functions">Editor functions</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors(…)">list-editors(…)</a></td></tr>
- <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors-file()">list-editors-file()</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors-file(…)">list-editors-file(…)</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#editors-stats(…)">editors-stats(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#BadEditor">BadEditor</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#set-editor(…)">set-editor(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#add-gui-editor(…)">add-gui-editor(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#set-override-GUI_EDITOR(…)">set-override-GUI_EDITOR(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#backup-editors(…)">backup-editors(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#restore-editors(…)">restore-editors(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors-backups(…)">list-editors-backups(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#backups-menu-restore">backups-menu-restore</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#edit-files(…)">edit-files(…)</a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
 <h2 id="Table_of_Contents"><a href="#___top" class="u" title="go to top of document">Table of Contents</a></h2>
@@ -615,6 +625,7 @@ footer {
 <li><p><a href="#editor-config">$editor-config</a></p></li>
 <li><p><a href="#config-files">@config-files</a></p></li>
 <li><p><a href="#grammar-editors">grammar Editors</a></p></li>
+<li><p><a href="#grammar-editorline--class-editorlineactions">grammar EditorLine &amp; class EditorLineActions</a></p></li>
 <li><p><a href="#some-useful-variables">Some useful variables</a></p></li>
 <ul>
 <li><p><a href="#gui_editor">$GUI_EDITOR</a></p></li>
@@ -636,8 +647,16 @@ footer {
 <li><p><a href="#list-editors">list-editors(…)</a></p></li>
 <li><p><a href="#introduction">list-editors-file(…)</a></p></li>
 <li><p><a href="#editors-stats">editors-stats(…)</a></p></li>
+<li><p><a href="#badeditor">BadEditor</a></p></li>
+<li><p><a href="#set-editor">set-editor</a></p></li>
+<li><p><a href="#add-gui-editor">add-gui-editor(…)</a></p></li>
+<li><p><a href="#set-override-gui_editor">set-override-GUI_EDITOR(…)</a></p></li>
+<li><p><a href="#backup-editors">backup-editors(…)</a></p></li>
+<li><p><a href="#restore-editors">restore-editors(…)</a></p></li>
+<li><p><a href="#list-editors-backups">list-editors-backups(…)</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#introduction">Introduction</a></p></li>
+<li><p><a href="#edit-files">edit-files(…)</a></p></li>
 </ul>
 </ul>
 <section>
@@ -701,7 +720,55 @@ class EditorsActions is export {
     }
 } # class EditorsActions #
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="Some_useful_variables"><a href="#GUI::Editors_0" class="u" title="go to top of document">Some useful variables</a></h2>
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="grammar_EditorLine_&amp;_class_EditorLineActions"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar EditorLine &amp; class EditorLineActions</a></h3>
+<p>A grammar and associated action class to parse and recognise the <strong><code>editor := value # comment</code></strong> lines in the <strong>editors</strong> file.</p><pre class="pod-block-code">grammar EditorLine is export {
+    regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* &lt;editor&gt; \h* [ '#' &lt;comment&gt; \h* ]? $ }
+    regex editor              { &lt;editor-name&gt; || &lt;path&gt; &lt;editor-name&gt; }
+    regex comment             { &lt;-[\n]&gt;* }
+    regex path                { &lt;lead-in&gt;  &lt;path-segments&gt;? }
+    regex lead-in             { [ '/' | '~' | '~/' ] }
+    regex path-segments       { &lt;path-segment&gt; [ '/' &lt;path-segment&gt; ]* '/' }
+    token path-segment        { [ &lt;with-space-in-it&gt; || &lt;with-other-stuff&gt; ] }
+    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    token with-other-stuff    { &lt;start-other-stuff&gt; &lt;tail-other-stuff&gt;* }
+    token start-other-stuff   { \w+ }
+    token tail-other-stuff    { &lt;other-stuff&gt;+ &lt;tails-tail&gt;? }
+    token tails-tail          { \w+ }
+    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&amp;' || '%' || '.' ] }
+    token editor-name         { &lt;with-other-stuff&gt; }
+}
+
+class EditorLineActions is export {
+    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
+    method other-stuff($/) {
+        my $other-stuff = ~$/;
+        make $other-stuff;
+    }
+
+</pre><ul>
+<li><p>...</p></li>
+<li><p>...</p></li>
+<li><p>...</p></li>
+</ul>
+<pre class="pod-block-code">    method config-line($/) {
+        my %cfg-line = type =&gt; 'config-line', value =&gt; $/&lt;editor&gt;.made;
+        if $/&lt;comment&gt; {
+            my $com = $/&lt;comment&gt;.made;
+            %cfg-line«comment» = $com;
+        }
+        make %cfg-line;
+    }
+    method TOP($made) {
+        my %top = type =&gt; 'editor-to-use', value =&gt; $made&lt;editor&gt;.made;
+        if $made&lt;comment&gt; {
+            my $com = $made&lt;comment&gt;.made;
+            %top«comment» = $com;
+        }
+        $made.make: %top;
+    }
+} # class EditorLineActions #
+
+</pre></section><section name="pod"><h2 id="Some_useful_variables"><a href="#GUI::Editors_0" class="u" title="go to top of document">Some useful variables</a></h2>
 <p><strong>NB: All these variables are available outside of the module as a sub of the same name. That way I can give read only access to them.</strong></p><h3 id="$GUI_EDITOR"><a href="#GUI::Editors_0" class="u" title="go to top of document">$GUI_EDITOR</a></h3>
 <p>The value of the <strong><code>%*ENV«GUI_EDITOR»</code></strong> environment variable or <strong><code>''</code></strong> if not set.</p><h3 id="$VISUAL"><a href="#GUI::Editors_0" class="u" title="go to top of document">$VISUAL</a></h3>
 <p>The value of the <strong><code>%*ENV«VISUAL»</code></strong> environment variable or <strong><code>''</code></strong> if not set.</p><h3 id="$EDITOR"><a href="#GUI::Editors_0" class="u" title="go to top of document">$EDITOR</a></h3>
@@ -839,14 +906,44 @@ sub editor( --&gt; Str:D) is export {
 <h3 id="list-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors(…)</a></h3>
 <p>List all known GUI Editors, flagging the selected editor with <strong>'*'</strong> note if none is flagged either <strong><code>$editor</code></strong> is set to a non GUI Editor or <strong><code>$editor</code></strong> is set to the empty string.</p><pre class="pod-block-code">sub list-editors(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
 
-</pre></section><section name="pod"><h3 id="list-editors-file()"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-file()</a></h3>
+</pre></section><section name="pod"><h3 id="list-editors-file(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-file(…)</a></h3>
 <p>List all GUI Editors in the configuration file.</p><pre class="pod-block-code">sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
 
 </pre></section><section name="pod"><h3 id="editors-stats(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">editors-stats(…)</a></h3>
 <p>Show the values of some editors parameters.</p><pre class="pod-block-code">sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-10T11:12:51Z</span></div></footer>
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="BadEditor"><a href="#GUI::Editors_0" class="u" title="go to top of document">BadEditor</a></h3>
+<p><strong><code>BadEditor</code></strong> is an Exception class for the <strong><code>GUI::Editors</code></strong> module.</p><pre class="pod-block-code">class BadEditor is Exception is export {
+    has Str:D $.msg = 'Error: bad editor specified';
+    method message( --&gt; Str:D) {
+        $!msg;
+    }
+}
+
+</pre></section><section name="pod"><h3 id="set-editor(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">set-editor(…)</a></h3>
+<p>A function to set the editor of choice.</p><pre class="pod-block-code">sub set-editor(Str:D $editor, Str $comment = Str --&gt; Bool:D) is export 
+
+</pre><p><strong>NB: this will still be overridden by <code>%*ENV«GUI_EDITOR»</code> unless you set <strong>override GUI_EDITOR</strong></strong>.</p></section><section name="pod"><h3 id="add-gui-editor(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">add-gui-editor(…)</a></h3>
+<p>Add an editor to the list of known GUI Editors.</p><pre class="pod-block-code">sub add-gui-editor(Str:D $editor, Str $comment = Str --&gt; Bool:D) is export 
+
+</pre><p><strong>NB: please make sure it really is a GUI Editor otherwise this module will not work correctly. You are completely free to set the chosen editor to what ever you like.</strong></p></section><section name="pod"><h3 id="set-override-GUI_EDITOR(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">set-override-GUI_EDITOR(…)</a></h3>
+<p>Set or unset the <strong>override GUI_EDITOR</strong> flag.</p><pre class="pod-block-code">sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --&gt; Bool:D) is export 
+
+</pre><p>If set then the file always wins else <strong><code>%*ENV«GUI_EDITOR»</code></strong> always wins if set.</p></section><section name="pod"><h3 id="backup-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backup-editors(…)</a></h3>
+<p>Backup the editors file.</p><pre class="pod-block-code">sub backup-editors(Bool:D $use-windows-formatting --&gt; Bool) is export 
+
+</pre><p><strong>NB: if $use-windows-formatting is true or the program is running on windows then B&lt;&lt;<code>.</code></strong> will become <strong><code>·</code></strong>&gt; and <strong><code>:</code></strong> will become <strong><code>.</code></strong>, this is to avoid problems with the special meaning of <strong><code>:</code></strong> on windows.</p></section><section name="pod"><h3 id="restore-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">restore-editors(…)</a></h3>
+<p>Restore the editors file from a backup.</p><pre class="pod-block-code">sub restore-editors(IO::Path $restore-from --&gt; Bool) is export 
+
+</pre><p>If <strong><code>$restore-from</code></strong> is relative and not found from the current directory <strong><code>$editor-config/$restore-from</code></strong> will be tried. </p></section><section name="pod"><h3 id="list-editors-backups(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-backups(…)</a></h3>
+<p>List all the available backups in the <strong><code>$editor-config</code></strong>.</p><pre class="pod-block-code">sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --&gt; True) is export
+
+</pre></section><section name="pod"><h3 id="backups-menu-restore"><a href="#GUI::Editors_0" class="u" title="go to top of document">backups-menu-restore</a></h3>
+<pre class="pod-block-code"></pre></section><section name="pod"><h3 id="edit-files(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">edit-files(…)</a></h3>
+<p>Edit arbitrary files using chosen editor.</p><pre class="pod-block-code">sub edit-files(Str:D @files --&gt; Bool:D) is export 
+
+</pre></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-14T19:26:29Z</span></div></footer>
 	</body>
 </html>
 

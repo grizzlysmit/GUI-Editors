@@ -20,6 +20,7 @@ Table of Contents
 =item1 L<$editor-config|#editor-config>
 =item1 L<@config-files|#config-files>
 =item1 L<grammar Editors|#grammar-editors>
+=item1 L<grammar EditorLine & class EditorLineActions|#grammar-editorline--class-editorlineactions>
 =item1 L<Some useful variables|#some-useful-variables>
 =item2 L<$GUI_EDITOR|#gui_editor>
 =item2 L<$VISUAL|#visual>
@@ -36,8 +37,16 @@ Table of Contents
 =item2 L<list-editors(…)|#list-editors>
 =item2 L<list-editors-file(…)|#introduction>
 =item2 L<editors-stats(…)|#editors-stats>
+=item2 L<BadEditor|#badeditor>
+=item2 L<set-editor|#set-editor>
+=item2 L<add-gui-editor(…)|#add-gui-editor>
+=item2 L<set-override-GUI_EDITOR(…)|#set-override-gui_editor>
+=item2 L<backup-editors(…)|#backup-editors>
+=item2 L<restore-editors(…)|#restore-editors>
+=item2 L<list-editors-backups(…)|#list-editors-backups>
 =item2 L<Introduction|#introduction>
 =item2 L<Introduction|#introduction>
+=item2 L<edit-files(…)|#edit-files>
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
@@ -56,6 +65,7 @@ A B<Raku> module for managing the users GUI Editor preferences in a variety of p
 use Terminal::ANSI::OO :t;
 use Terminal::Width;
 use Terminal::WCWidth;
+use Term::termios;
 
 INIT my $debug = False;
 ####################################
@@ -313,7 +323,7 @@ grammar Editors is export {
     regex TOP                 { [ <line> [ \v+ <line> ]* \v* ]? }
     regex line                { [ <white-space-line> || <override-gui_editor> || <config-line> || <editor-to-use> || <comment-line> ] }
     regex white-space-line    { ^^ \h* $$ }
-    regex override-gui_editor { ^^ \h* 'override' \h+ 'GUI_EDITOR' \h* $$ }
+    regex override-gui_editor { ^^ \h* 'override' \h+ 'GUI_EDITOR' [ \h+ '#' <comment> ]? \h* $$ }
     regex comment-line        { ^^ \h* '#' <-[\v]>* $$ }
     regex config-line         { ^^ \h* 'guieditors' \h* '+'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
     regex editor-to-use       { ^^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
@@ -458,6 +468,205 @@ class EditorsActions is export {
         $made.make: @top;
     }
 } # class EditorsActions #
+
+=begin pod
+
+=head3 grammar EditorLine & class EditorLineActions
+
+A grammar and associated action class to parse and recognise the B<C<editor := value # comment>> lines in the B<editors> file.
+
+=begin code :lang<raku>
+
+grammar EditorLine is export {
+    regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $ }
+    regex editor              { <editor-name> || <path> <editor-name> }
+    regex comment             { <-[\n]>* }
+    regex path                { <lead-in>  <path-segments>? }
+    regex lead-in             { [ '/' | '~' | '~/' ] }
+    regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
+    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
+    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
+    token start-other-stuff   { \w+ }
+    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
+    token tails-tail          { \w+ }
+    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
+    token editor-name         { <with-other-stuff> }
+}
+
+class EditorLineActions is export {
+    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
+    method other-stuff($/) {
+        my $other-stuff = ~$/;
+        make $other-stuff;
+    }
+
+=end code
+
+=item1 ...
+=item1 ...
+=item1 ...
+
+=begin code :lang<raku>
+
+    method config-line($/) {
+        my %cfg-line = type => 'config-line', value => $/<editor>.made;
+        if $/<comment> {
+            my $com = $/<comment>.made;
+            %cfg-line«comment» = $com;
+        }
+        make %cfg-line;
+    }
+    method TOP($made) {
+        my %top = type => 'editor-to-use', value => $made<editor>.made;
+        if $made<comment> {
+            my $com = $made<comment>.made;
+            %top«comment» = $com;
+        }
+        $made.make: %top;
+    }
+} # class EditorLineActions #
+
+=end code
+
+=end pod
+
+grammar EditorLine is export {
+    regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $ }
+    regex editor              { <editor-name> || <path> <editor-name> }
+    regex comment             { <-[\n]>* }
+    regex path                { <lead-in>  <path-segments>? }
+    regex lead-in             { [ '/' | '~' | '~/' ] }
+    regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
+    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
+    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
+    token start-other-stuff   { \w+ }
+    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
+    token tails-tail          { \w+ }
+    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
+    token editor-name         { <with-other-stuff> }
+}
+
+class EditorLineActions is export {
+    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
+    method other-stuff($/) {
+        my $other-stuff = ~$/;
+        make $other-stuff;
+    }
+    #token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
+    method with-other-stuff($/) {
+        my @tailotherstuff;
+        if $/<tail-other-stuff> {
+            @tailotherstuff = $/<tail-other-stuff>».made;
+        }
+        my $with-other-stuff = $/<start-other-stuff>.made ~ @tailotherstuff.join();
+        make $with-other-stuff;
+    }
+    #token editor-name         { <with-other-stuff> }
+    method editor-name($/) {
+        my $edname = $/<with-other-stuff>.made;
+        make $edname;
+    }
+    method lead-in($/) {
+        my $leadin = ~$/;
+        make $leadin;
+    }
+    #token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    method with-space-in-it($/) {
+        my $with-space-in-it = ~$/;
+        make $with-space-in-it;
+    }
+    #token start-other-stuff   { \w+ }
+    method start-other-stuff($/) {
+        my $start-other-stuff = ~$/;
+        make $start-other-stuff;
+    }
+    #token tails-tail          { \w+ }
+    method tails-tail($/) {
+        my $tails-tail = ~$/;
+        make $tails-tail;
+    }
+    #token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
+    method tail-other-stuff($/) {
+        my @otherstuff = $/<other-stuff>».made;
+        my $tail-other-stuff = @otherstuff.join();
+        if $/<tails-tail> {
+            $tail-other-stuff ~= $<tails-tail>.made;
+        }
+        make $tail-other-stuff;
+    }
+    #token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
+    method path-segment($/) {
+        my $path-segment = ~$/;
+        make $path-segment;
+    }
+    method path-segments($/) {
+        my @path-seg = $/<path-segment>».made;
+        make @path-seg.join('/');
+    }
+    method path($/) {
+        my Str $ed-path = $/<lead-in>.made ~ $/<path-segments>.made;
+        make $ed-path;
+    }
+    method editor($/) {
+        my $ed-name;
+        if $/<path> {
+            $ed-name = $/<path>.made ~ '/' ~ $/<editor-name>.made;
+        } else {
+            $ed-name = $/<editor-name>.made;
+        }
+        make $ed-name;
+    }
+    method comment($/) {
+        my $comm = (~$/).trim;
+        make $comm;
+    }
+    method config-line($/) {
+        my %cfg-line = type => 'config-line', value => $/<editor>.made;
+        if $/<comment> {
+            my $com = $/<comment>.made;
+            %cfg-line«comment» = $com;
+        }
+        make %cfg-line;
+    }
+    method TOP($made) {
+        my %top = type => 'editor-to-use', value => $made<editor>.made;
+        if $made<comment> {
+            my $com = $made<comment>.made;
+            %top«comment» = $com;
+        }
+        $made.make: %top;
+    }
+} # class EditorLineActions #
+
+grammar OverrideGUIEditor is export {
+    regex TOP     { ^ \h* [ <commented> \h* ]? 'override' \h+ 'GUI_EDITOR' [ \h+ '#' <comment> ]? \h* $ }
+    regex comment { <-[\n]>* }
+    token commented { '#' }
+}
+
+class OverrideGUIEditorActions is export {
+    method comment($/) {
+        my $comment = (~$/).trim;
+        make $comment;
+    }
+    method commented($/) {
+        my $commented = (~$/).trim;
+        make $commented;
+    }
+    method TOP($made) {
+        my %top = type => 'override-gui_editor', :value;
+        if $made<commented> {
+            %top«value» = False;
+        }
+        if $made<comment> {
+            my $com = $made<comment>.made;
+            %top«comment» = $com;
+        }
+        $made.make: %top;
+    }
+} # class OverrideGUIEditorActions #
 
 =begin pod
 
@@ -971,7 +1180,7 @@ sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
 
 =begin pod
 
-=head3 list-editors-file()
+=head3 list-editors-file(…)
 
 List all GUI Editors in the configuration file.
 
@@ -1111,3 +1320,402 @@ sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
     } # if $colour else #
     return True;
 } # sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export #
+
+=begin pod
+
+=head3 BadEditor
+
+B<C<BadEditor>> is an Exception class for the B<C<GUI::Editors>> module.
+
+=begin code :lang<raku>
+
+class BadEditor is Exception is export {
+    has Str:D $.msg = 'Error: bad editor specified';
+    method message( --> Str:D) {
+        $!msg;
+    }
+}
+
+=end code
+
+=end pod
+
+class BadEditor is Exception is export {
+    has Str:D $.msg = 'Error: bad editor specified';
+    method message( --> Str:D) {
+        $!msg;
+    }
+}
+
+=begin pod
+
+=head3 set-editor(…)
+
+A function to set the editor of choice.
+
+=begin code :lang<raku>
+
+sub set-editor(Str:D $editor, Str $comment = Str --> Bool:D) is export 
+
+=end code
+
+B<NB: this will still be overridden by C<%*ENV«GUI_EDITOR»> unless you set B<override GUI_EDITOR>>.
+
+=end pod
+
+sub set-editor(Str:D $editor, Str $comment = Str --> Bool:D) is export {
+    if @default-editors.elems == 1 && (@default-editors[0] eq $editor) {
+        return True; # Already set to this value #
+    }
+    my Str:D $line = "        editor      :=  $editor";
+    with $comment {
+        $line ~= " # $comment";
+    }
+    my $actions = EditorLineActions;
+    my IO::Handle:D $input  = "$editor-config/editors".IO.open:     :r, :nl-in("\n")   :chomp;
+    my IO::Handle:D $output = "$editor-config/editors.new".IO.open: :w, :nl-out("\n"), :chomp;
+    my Bool:D $unset = True;
+    my Str $ln;
+    $ln = $input.get;
+    while !$input.eof {
+        my $ed-line = EditorLine.parse($ln, :enc('UTF-8'), :$actions).made;
+        if $ed-line {
+            if $unset {
+                $output.say: $line;
+                $unset = False;
+            }
+        } else {
+            $output.say: $ln;
+        }
+        $ln = $input.get;
+    } # while !$input.eof #
+    if $ln { # last line in file #
+        my $ed-line = EditorLine.parse($ln, :enc('UTF-8'), :$actions).made;
+        if $ed-line {
+            if $unset {
+                $output.say: $line;
+                $unset = False;
+            }
+        } else {
+            $output.say: $ln;
+        }
+    } # if $ln #
+    if $unset { # can happen if editor was not set before #
+        $output.say: $line;
+        $unset = False;
+    }
+    $input.close;
+    $output.close;
+    if $unset {
+        $*ERR.say: qq[Error: editors: $editor "not set"];
+        return "$editor-config/editors.new".IO.unlink;
+    } elsif "$editor-config/editors.new".IO.move: "$editor-config/editors" {
+        return True;
+    } else {
+        BadEditor.new(:msg("move failed")).throw;
+    }
+    return !$unset; # should never be reached #
+} #`««« sub set-editor(Str:D $editor, Str $comment = Str --> Bool:D) is export »»»
+
+=begin pod
+
+=head3 add-gui-editor(…)
+
+Add an editor to the list of known GUI Editors.
+
+=begin code :lang<raku>
+
+sub add-gui-editor(Str:D $editor, Str $comment = Str --> Bool:D) is export 
+
+=end code
+
+B<NB: please make sure it really is a GUI Editor otherwise this module will
+not work correctly. You are completely free to set the chosen editor to what
+ever you like.>
+
+=end pod
+
+sub add-gui-editor(Str:D $editor, Str $comment = Str --> Bool:D) is export {
+    if @gui-editors.grep( -> $ged { $ged eq $editor }) {
+        return True; # already in there. #
+    }
+    my Str:D $line = "        guieditors  +=  $editor";
+    with $comment {
+        $line ~= " # $comment";
+    }
+    my IO::Handle:D $output  = "$editor-config/editors".IO.open:     :a, :nl-in("\n")   :chomp;
+    $output.say: $line;
+    return $output.close;
+} #`««« sub add-gui-editor(Str:D $editor --> Bool:D) is export »»»
+
+=begin pod
+
+=head3 set-override-GUI_EDITOR(…)
+
+Set or unset the B<override GUI_EDITOR> flag.
+
+=begin code :lang<raku>
+
+sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --> Bool:D) is export 
+
+=end code
+
+If set then the file always wins else B<C<%*ENV«GUI_EDITOR»>> always wins if set.
+
+=end pod
+
+sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --> Bool:D) is export {
+    if @override-gui_editor.elems == 1 && (@override-gui_editor[0] eq $editor) {
+        return True; # Already set to this value #
+    }
+    my Str:D $line = "        override GUI_EDITOR";
+    $line          = "        #override GUI_EDITOR" unless $value;
+    with $comment {
+        $line ~= " # $comment";
+    }
+    my $actions = OverrideGUIEditorActions;
+    my IO::Handle:D $input  = "$editor-config/editors".IO.open:     :r, :nl-in("\n")   :chomp;
+    my IO::Handle:D $output = "$editor-config/editors.new".IO.open: :w, :nl-out("\n"), :chomp;
+    my Bool:D $unset = True;
+    my Str $ln;
+    $ln = $input.get;
+    while !$input.eof {
+        my $ed-line = OverrideGUIEditor.parse($ln, :enc('UTF-8'), :$actions).made;
+        if $ed-line {
+            if $unset {
+                $output.say: $line;
+                $unset = False;
+            }
+        } else {
+            $output.say: $ln;
+        }
+        $ln = $input.get;
+    } # while !$input.eof #
+    if $ln { # last line in file #
+        my $ed-line = OverrideGUIEditor.parse($ln, :enc('UTF-8'), :$actions).made;
+        if $ed-line {
+            if $unset {
+                $output.say: $line;
+                $unset = False;
+            }
+        } else {
+            $output.say: $ln;
+        }
+    } # if $ln #
+    if $unset { # can happen if editor was not set before #
+        $output.say: $line;
+        $unset = False;
+    }
+    $input.close;
+    $output.close;
+    if $unset {
+        $*ERR.say: qq[Error: editors: $editor "not set"];
+        return "$editor-config/editors.new".IO.unlink;
+    } elsif "$editor-config/editors.new".IO.move: "$editor-config/editors" {
+        return True;
+    } else {
+        BadEditor.new(:msg("move failed")).throw;
+    }
+    return !$unset; # should never be reached #
+} #`««« sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --> Bool:D) is export »»»
+
+=begin pod
+
+=head3 backup-editors(…)
+
+Backup the editors file.
+
+=begin code :lang<raku>
+
+sub backup-editors(Bool:D $use-windows-formatting --> Bool) is export 
+
+=end code
+
+B<NB: if $use-windows-formatting is true or the program is running on windows then
+B<<C<.>> will become B<C<·>>> and B<C<:>> will become B<C<.>>, this is to avoid
+problems with the special meaning of B<C<:>> on windows.
+
+=end pod
+
+sub backup-editors(Bool:D $use-windows-formatting --> Bool) is export {
+    my DateTime $now = DateTime.now;
+    my Str:D $time-stamp = $now.Str;
+    if $*DISTRO.is-win || $use-windows-formatting {
+        $time-stamp ~~ tr/./·/;
+        $time-stamp ~~ tr/:/./;
+    }
+    return "$editor-config/editors".IO.copy("$editor-config/editors.$time-stamp".IO);
+} # sub backup-editors(Bool:D $use-windows-formatting --> Bool) is export #
+
+=begin pod
+
+=head3 restore-editors(…)
+
+Restore the editors file from a backup.
+
+=begin code :lang<raku>
+
+sub restore-editors(IO::Path $restore-from --> Bool) is export 
+
+=end code
+
+If B<C<$restore-from>> is relative and not found from the current directory 
+B<C<$editor-config/$restore-from>> will be tried. 
+
+=end pod
+
+sub restore-editors(IO::Path $restore-from is copy --> Bool) is export {
+    with $restore-from {
+        my $actions = EditorsActions;
+        if $restore-from ~~ :f {
+            my @ed-file = $restore-from.slurp.split("\n");
+            return $restore-from.copy("$editor-config/editors".IO) if  Editors.parse(@ed-file.join("\x0A"), :enc('UTF-8'), :$actions).made;
+        } elsif $restore-from.is-relative && "$editor-config/{$restore-from.Str}".IO ~~ :f {
+            $restore-from = "$editor-config/{$restore-from.Str}".IO;
+            my @ed-file = $restore-from.slurp.split("\n");
+            return $restore-from.copy("$editor-config/editors".IO) if  Editors.parse(@ed-file.join("\x0A"), :enc('UTF-8'), :$actions).made;
+        }
+        return False;
+    } else {
+        return False;
+    }
+}
+
+=begin pod
+
+=head3 list-editors-backups(…)
+
+List all the available backups in the B<C<$editor-config>>.
+
+=begin code :lang<raku>
+
+sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export
+
+=end code
+
+=end pod
+
+sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export {
+    $colour = True if $syntax;
+    my IO::Path @backups = $editor-config.IO.dir(:test(rx/ ^ 
+                                                           'editors.' \d ** 4 '-' \d ** 2 '-' \d ** 2
+                                                               [ 'T' \d **2 [ [ '.' || ':' ] \d ** 2 ] ** {0..2} [ [ '.' || '·' ] \d+ 
+                                                                   [ [ '+' || '-' ] \d ** 2 [ '.' || ':' ] \d ** 2 || 'z' ]?  ]?
+                                                               ]?
+                                                           $
+                                                         /
+                                                       )
+                                                );
+    my $actions = EditorsActions;
+    @backups .=grep: -> IO::Path $fl { 
+                                my @file = $fl.slurp.split("\n");
+                                Editors.parse(@file.join("\x0A"), :enc('UTF-8'), :$actions).made;
+                            };
+    @backups .=sort;
+    my Int:D $cnt = 0;
+    if $colour {
+        if $syntax {
+            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-80s", 'backup') ~ t.text-reset;
+            $cnt++;
+            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ Sprintf("%-[=]80s", '') ~ t.text-reset;
+            $cnt++;
+            for @backups -> $file {
+                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-80s", $file.basename)
+                                                                                                                                    ~ t.text-reset;
+                $cnt++;
+            }
+        } else {
+            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-80s", 'backup') ~ t.text-reset;
+            $cnt++;
+            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ Sprintf("%-[=]80s", '') ~ t.text-reset;
+            $cnt++;
+            for @backups -> $file {
+                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-80s", $file.basename)
+                                                                                                                                    ~ t.text-reset;
+                $cnt++;
+            }
+        }
+    } else {
+        'backup'.say;
+        say '=' x 80;
+        for @backups -> $file {
+            $file.basename.say;
+        }
+    }
+} # sub list-editors-backups(Boo:D $colour is copy, Bool:D $syntax --> True) is export #
+
+=begin pod
+
+=head3 backups-menu-restore
+
+=begin code :lang<raku>
+
+=end code
+
+=end pod
+
+sub backups-menu-restore(Bool:D $colour, Bool:D $syntax, Str:D $message = "" --> Bool:D) is export {
+    my IO::Path @backups = $editor-config.IO.dir(:test(rx/ ^ 
+                                                           'editors.' \d ** 4 '-' \d ** 2 '-' \d ** 2
+                                                               [ 'T' \d **2 [ [ '.' || ':' ] \d ** 2 ] ** {0..2} [ [ '.' || '·' ] \d+ 
+                                                                   [ [ '+' || '-' ] \d ** 2 [ '.' || ':' ] \d ** 2 || 'z' ]?  ]?
+                                                               ]?
+                                                           $
+                                                         /
+                                                       )
+                                                );
+    ###############################################
+    #                                             #
+    #  make sure they are all valid editor files  #
+    #                                             #
+    ###############################################
+    my $actions = EditorsActions;
+    @backups .=grep: -> IO::Path $fl { 
+                                my @file = $fl.slurp.split("\n");
+                                Editors.parse(@file.join("\x0A"), :enc('UTF-8'), :$actions).made;
+                            };
+    my Str:D @Backups = @backups.map: { .basename };
+    @Backups .=sort();
+    my Str $file = menu(@Backups, $message, :$colour, :$syntax);
+    return False without $file;
+    return False if $file eq '';
+    return restore-editors($file.IO);
+}
+
+=begin pod
+
+=head3 edit-files(…)
+
+Edit arbitrary files using chosen editor.
+
+=begin code :lang<raku>
+
+sub edit-files(Str:D @files --> Bool:D) is export 
+
+=end code
+
+=end pod
+
+sub edit-files(Str:D @files --> Bool:D) is export {
+    if $editor {
+        my $option = '';
+        my @args;
+        my $edbase = $editor.IO.basename;
+        if $edbase eq 'gvim' {
+            $option = '-p';
+            @args.append('-p');
+        }
+        @args.append(|@files);
+        my $proc = run($editor, |@args);
+        return $proc.exitcode == 0 || $proc.exitcode == -1;
+    } else {
+        $*ERR.say: "no editor found please set GUI_EDITOR, VISUAL or EDITOR to your preferred editor.";
+        $*ERR.say: "e.g. export GUI_EDITOR=/usr/bin/gvim";
+        $*ERR.say: "or set editor in the $editor-config/editors file this can be done with the set editor command.";
+        $*ERR.say: qq[NB: the editor will be set by first checking GUI_EDITOR then VISUAL then EDITOR and
+                    finally editor in the config file so GUI_EDITOR will win over all.
+                    Unless you supply the "override GUI_EDITOR" directive in the $editor-config/editors file
+                    and also supplied the "editor := <editor>" directive];
+        return False;
+    }
+}

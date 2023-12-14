@@ -1,5 +1,5 @@
 .pc
-.TH Editors.rakumod 1 2023-12-10
+.TH Editors.rakumod 1 2023-12-15
 .SH GUI::Editors
 .SS Table of Contents
 .IP \(bu 2m
@@ -22,6 +22,8 @@ $editor\-config [#editor-config]
 @config\-files [#config-files]
 .IP \(bu 2m
 grammar Editors [#grammar-editors]
+.IP \(bu 2m
+grammar EditorLine & class EditorLineActions [#grammar-editorline--class-editorlineactions]
 .IP \(bu 2m
 Some useful variables [#some-useful-variables]
 .RS 2n
@@ -84,11 +86,43 @@ editors\-stats(…) [#editors-stats]
 .RE
 .RS 2n
 .IP \(bu 2m
+BadEditor [#badeditor]
+.RE
+.RS 2n
+.IP \(bu 2m
+set\-editor [#set-editor]
+.RE
+.RS 2n
+.IP \(bu 2m
+add\-gui\-editor(…) [#add-gui-editor]
+.RE
+.RS 2n
+.IP \(bu 2m
+set\-override\-GUI_EDITOR(…) [#set-override-gui_editor]
+.RE
+.RS 2n
+.IP \(bu 2m
+backup\-editors(…) [#backup-editors]
+.RE
+.RS 2n
+.IP \(bu 2m
+restore\-editors(…) [#restore-editors]
+.RE
+.RS 2n
+.IP \(bu 2m
+list\-editors\-backups(…) [#list-editors-backups]
+.RE
+.RS 2n
+.IP \(bu 2m
 Introduction [#introduction]
 .RE
 .RS 2n
 .IP \(bu 2m
 Introduction [#introduction]
+.RE
+.RS 2n
+.IP \(bu 2m
+edit\-files(…) [#edit-files]
 .RE
 .SH "NAME"
 GUI::Editors 
@@ -199,6 +233,69 @@ class EditorsActions is export {
 .RE
 .P
 Top of Document [#table-of-contents]
+.SS grammar EditorLine & class EditorLineActions
+
+A grammar and associated action class to parse and recognise the \fBeditor := value # comment\fR lines in the \fBeditors\fR file\&.
+
+.RS 4m
+.EX
+grammar EditorLine is export {
+    regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $ }
+    regex editor              { <editor\-name> || <path> <editor\-name> }
+    regex comment             { <\-[\n]>* }
+    regex path                { <lead\-in>  <path\-segments>? }
+    regex lead\-in             { [ '/' | '~' | '~/' ] }
+    regex path\-segments       { <path\-segment> [ '/' <path\-segment> ]* '/' }
+    token path\-segment        { [ <with\-space\-in\-it> || <with\-other\-stuff> ] }
+    token with\-space\-in\-it    { \w+ [ ' ' \w+ ]* }
+    token with\-other\-stuff    { <start\-other\-stuff> <tail\-other\-stuff>* }
+    token start\-other\-stuff   { \w+ }
+    token tail\-other\-stuff    { <other\-stuff>+ <tails\-tail>? }
+    token tails\-tail          { \w+ }
+    token other\-stuff         { [ '\-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '\&.' ] }
+    token editor\-name         { <with\-other\-stuff> }
+}
+
+class EditorLineActions is export {
+    #token other\-stuff         { [ '\-' || '+' || ':' || '@' || '=' || ',' || '%' || '\&.' ] }
+    method other\-stuff($/) {
+        my $other\-stuff = ~$/;
+        make $other\-stuff;
+    }
+
+
+.EE
+.RE
+.IP \(bu 2m
+\&.\&.\&.
+.IP \(bu 2m
+\&.\&.\&.
+.IP \(bu 2m
+\&.\&.\&.
+
+.RS 4m
+.EX
+    method config\-line($/) {
+        my %cfg\-line = type => 'config\-line', value => $/<editor>\&.made;
+        if $/<comment> {
+            my $com = $/<comment>\&.made;
+            %cfg\-line«comment» = $com;
+        }
+        make %cfg\-line;
+    }
+    method TOP($made) {
+        my %top = type => 'editor\-to\-use', value => $made<editor>\&.made;
+        if $made<comment> {
+            my $com = $made<comment>\&.made;
+            %top«comment» = $com;
+        }
+        $made\&.make: %top;
+    }
+} # class EditorLineActions #
+
+
+.EE
+.RE
 .SS Some useful variables
 
 \fBNB: All these variables are available outside of the module as a sub of the same name\&. That way I can give read only access to them\&.\fR
@@ -425,7 +522,7 @@ sub list\-editors(Bool:D $colour is copy, Bool:D $syntax \-\-> Bool) is export
 
 .EE
 .RE
-.SS list\-editors\-file()
+.SS list\-editors\-file(…)
 
 List all GUI Editors in the configuration file\&.
 
@@ -449,3 +546,113 @@ sub editors\-stats(Bool:D $colour is copy, Bool:D $syntax \-\-> Bool) is export
 .RE
 .P
 Top of Document [#table-of-contents]
+.SS BadEditor
+
+\fBBadEditor\fR is an Exception class for the \fBGUI::Editors\fR module\&.
+
+.RS 4m
+.EX
+class BadEditor is Exception is export {
+    has Str:D $\&.msg = 'Error: bad editor specified';
+    method message( \-\-> Str:D) {
+        $!msg;
+    }
+}
+
+
+.EE
+.RE
+.SS set\-editor(…)
+
+A function to set the editor of choice\&.
+
+.RS 4m
+.EX
+sub set\-editor(Str:D $editor, Str $comment = Str \-\-> Bool:D) is export 
+
+
+.EE
+.RE
+.P
+\fBNB: this will still be overridden by %*ENV«GUI_EDITOR» unless you set \fBoverride GUI_EDITOR\fR\fR\&.
+.SS add\-gui\-editor(…)
+
+Add an editor to the list of known GUI Editors\&.
+
+.RS 4m
+.EX
+sub add\-gui\-editor(Str:D $editor, Str $comment = Str \-\-> Bool:D) is export 
+
+
+.EE
+.RE
+.P
+\fBNB: please make sure it really is a GUI Editor otherwise this module will not work correctly\&. You are completely free to set the chosen editor to what ever you like\&.\fR
+.SS set\-override\-GUI_EDITOR(…)
+
+Set or unset the \fBoverride GUI_EDITOR\fR flag\&.
+
+.RS 4m
+.EX
+sub set\-override\-GUI_EDITOR(Bool:D $value, Str $comment = Str \-\-> Bool:D) is export 
+
+
+.EE
+.RE
+.P
+If set then the file always wins else \fB%*ENV«GUI_EDITOR»\fR always wins if set\&.
+.SS backup\-editors(…)
+
+Backup the editors file\&.
+
+.RS 4m
+.EX
+sub backup\-editors(Bool:D $use\-windows\-formatting \-\-> Bool) is export 
+
+
+.EE
+.RE
+.P
+\fBNB: if $use\-windows\-formatting is true or the program is running on windows then B<<\&.\fR will become \fB·\fR> and \fB:\fR will become \fB\&.\fR, this is to avoid problems with the special meaning of \fB:\fR on windows\&.
+.SS restore\-editors(…)
+
+Restore the editors file from a backup\&.
+
+.RS 4m
+.EX
+sub restore\-editors(IO::Path $restore\-from \-\-> Bool) is export 
+
+
+.EE
+.RE
+.P
+If \fB$restore\-from\fR is relative and not found from the current directory \fB$editor\-config/$restore\-from\fR will be tried\&. 
+.SS list\-editors\-backups(…)
+
+List all the available backups in the \fB$editor\-config\fR\&.
+
+.RS 4m
+.EX
+sub list\-editors\-backups(Bool:D $colour is copy, Bool:D $syntax \-\-> True) is export
+
+
+.EE
+.RE
+.SS backups\-menu\-restore
+
+.RS 4m
+.EX
+
+.EE
+.RE
+.SS edit\-files(…)
+
+Edit arbitrary files using chosen editor\&.
+
+.RS 4m
+.EX
+sub edit\-files(Str:D @files \-\-> Bool:D) is export 
+
+
+.EE
+.RE

@@ -24,6 +24,8 @@ Table of Contents
 
   * [grammar Editors](#grammar-editors)
 
+  * [grammar EditorLine & class EditorLineActions](#grammar-editorline--class-editorlineactions)
+
   * [Some useful variables](#some-useful-variables)
 
     * [$GUI_EDITOR](#gui_editor)
@@ -56,9 +58,25 @@ Table of Contents
 
     * [editors-stats(…)](#editors-stats)
 
+    * [BadEditor](#badeditor)
+
+    * [set-editor](#set-editor)
+
+    * [add-gui-editor(…)](#add-gui-editor)
+
+    * [set-override-GUI_EDITOR(…)](#set-override-gui_editor)
+
+    * [backup-editors(…)](#backup-editors)
+
+    * [restore-editors(…)](#restore-editors)
+
+    * [list-editors-backups(…)](#list-editors-backups)
+
     * [Introduction](#introduction)
 
     * [Introduction](#introduction)
+
+    * [edit-files(…)](#edit-files)
 
 NAME
 ====
@@ -177,6 +195,62 @@ class EditorsActions is export {
 ```
 
 [Top of Document](#table-of-contents)
+
+### grammar EditorLine & class EditorLineActions
+
+A grammar and associated action class to parse and recognise the **`editor := value # comment`** lines in the **editors** file.
+
+```raku
+grammar EditorLine is export {
+    regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $ }
+    regex editor              { <editor-name> || <path> <editor-name> }
+    regex comment             { <-[\n]>* }
+    regex path                { <lead-in>  <path-segments>? }
+    regex lead-in             { [ '/' | '~' | '~/' ] }
+    regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
+    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
+    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
+    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
+    token start-other-stuff   { \w+ }
+    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
+    token tails-tail          { \w+ }
+    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
+    token editor-name         { <with-other-stuff> }
+}
+
+class EditorLineActions is export {
+    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
+    method other-stuff($/) {
+        my $other-stuff = ~$/;
+        make $other-stuff;
+    }
+```
+
+  * ...
+
+  * ...
+
+  * ...
+
+```raku
+    method config-line($/) {
+        my %cfg-line = type => 'config-line', value => $/<editor>.made;
+        if $/<comment> {
+            my $com = $/<comment>.made;
+            %cfg-line«comment» = $com;
+        }
+        make %cfg-line;
+    }
+    method TOP($made) {
+        my %top = type => 'editor-to-use', value => $made<editor>.made;
+        if $made<comment> {
+            my $com = $made<comment>.made;
+            %top«comment» = $com;
+        }
+        $made.make: %top;
+    }
+} # class EditorLineActions #
+```
 
 Some useful variables
 ---------------------
@@ -389,7 +463,7 @@ List all known GUI Editors, flagging the selected editor with **'*'** note if no
 sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
 ```
 
-### list-editors-file()
+### list-editors-file(…)
 
 List all GUI Editors in the configuration file.
 
@@ -406,4 +480,89 @@ sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
 ```
 
 [Top of Document](#table-of-contents)
+
+### BadEditor
+
+**`BadEditor`** is an Exception class for the **`GUI::Editors`** module.
+
+```raku
+class BadEditor is Exception is export {
+    has Str:D $.msg = 'Error: bad editor specified';
+    method message( --> Str:D) {
+        $!msg;
+    }
+}
+```
+
+### set-editor(…)
+
+A function to set the editor of choice.
+
+```raku
+sub set-editor(Str:D $editor, Str $comment = Str --> Bool:D) is export
+```
+
+**NB: this will still be overridden by `%*ENV«GUI_EDITOR»` unless you set **override GUI_EDITOR****.
+
+### add-gui-editor(…)
+
+Add an editor to the list of known GUI Editors.
+
+```raku
+sub add-gui-editor(Str:D $editor, Str $comment = Str --> Bool:D) is export
+```
+
+**NB: please make sure it really is a GUI Editor otherwise this module will not work correctly. You are completely free to set the chosen editor to what ever you like.**
+
+### set-override-GUI_EDITOR(…)
+
+Set or unset the **override GUI_EDITOR** flag.
+
+```raku
+sub set-override-GUI_EDITOR(Bool:D $value, Str $comment = Str --> Bool:D) is export
+```
+
+If set then the file always wins else **`%*ENV«GUI_EDITOR»`** always wins if set.
+
+### backup-editors(…)
+
+Backup the editors file.
+
+```raku
+sub backup-editors(Bool:D $use-windows-formatting --> Bool) is export
+```
+
+**NB: if $use-windows-formatting is true or the program is running on windows then B<<`.`** will become **`·`**> and **`:`** will become **`.`**, this is to avoid problems with the special meaning of **`:`** on windows.
+
+### restore-editors(…)
+
+Restore the editors file from a backup.
+
+```raku
+sub restore-editors(IO::Path $restore-from --> Bool) is export
+```
+
+If **`$restore-from`** is relative and not found from the current directory **`$editor-config/$restore-from`** will be tried. 
+
+### list-editors-backups(…)
+
+List all the available backups in the **`$editor-config`**.
+
+```raku
+sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export
+```
+
+### backups-menu-restore
+
+```raku
+
+```
+
+### edit-files(…)
+
+Edit arbitrary files using chosen editor.
+
+```raku
+sub edit-files(Str:D @files --> Bool:D) is export
+```
 
