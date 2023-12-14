@@ -584,7 +584,7 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#$editor-config">$editor-config</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#@config-files">@config-files</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#@guieditors">@guieditors</a></td></tr>
- <tr class="toc-level-2"><td class="toc-text"><a href="#grammar_Editors">grammar Editors</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-text"><a href="#grammar_Editors_&amp;_action_class_EditorsActions">grammar Editors &amp; action class EditorsActions</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#grammar_EditorLine_&amp;_class_EditorLineActions">grammar EditorLine &amp; class EditorLineActions</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Some_useful_variables">Some useful variables</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#$GUI_EDITOR">$GUI_EDITOR</a></td></tr>
@@ -624,7 +624,7 @@ footer {
 <li><p><a href="#introduction">Introduction</a></p></li>
 <li><p><a href="#editor-config">$editor-config</a></p></li>
 <li><p><a href="#config-files">@config-files</a></p></li>
-<li><p><a href="#grammar-editors">grammar Editors</a></p></li>
+<li><p><a href="#grammar-editors--class-editorsactions">grammar Editors</a></p></li>
 <li><p><a href="#grammar-editorline--class-editorlineactions">grammar EditorLine &amp; class EditorLineActions</a></p></li>
 <li><p><a href="#some-useful-variables">Some useful variables</a></p></li>
 <ul>
@@ -686,7 +686,7 @@ sub guieditors( --&gt; Array[Str:D]) is export {
     return @guieditors;
 }
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="grammar_Editors"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar Editors</a></h2>
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="grammar_Editors_&amp;_action_class_EditorsActions"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar Editors &amp; action class EditorsActions</a></h2>
 <pre class="pod-block-code">grammar Editors is export {
     regex TOP                 { [ &lt;line&gt; [ \v+ &lt;line&gt; ]* \v* ]? }
     regex line                { [ &lt;white-space-line&gt; || &lt;override-gui_editor&gt; || &lt;config-line&gt; || &lt;editor-to-use&gt; || &lt;comment-line&gt; ] }
@@ -720,7 +720,7 @@ class EditorsActions is export {
     }
 } # class EditorsActions #
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="grammar_EditorLine_&amp;_class_EditorLineActions"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar EditorLine &amp; class EditorLineActions</a></h3>
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="grammar_EditorLine_&amp;_class_EditorLineActions"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar EditorLine &amp; class EditorLineActions</a></h3>
 <p>A grammar and associated action class to parse and recognise the <strong><code>editor := value # comment</code></strong> lines in the <strong>editors</strong> file.</p><pre class="pod-block-code">grammar EditorLine is export {
     regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* &lt;editor&gt; \h* [ '#' &lt;comment&gt; \h* ]? $ }
     regex editor              { &lt;editor-name&gt; || &lt;path&gt; &lt;editor-name&gt; }
@@ -943,7 +943,7 @@ sub editor( --&gt; Str:D) is export {
 <p>Edit arbitrary files using chosen editor.</p><pre class="pod-block-code">sub edit-files(Str:D @files --&gt; Bool:D) is export 
 
 </pre></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-14T19:29:02Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-14T19:43:28Z</span></div></footer>
 	</body>
 </html>
 

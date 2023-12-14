@@ -22,7 +22,7 @@ Table of Contents
 
   * [@config-files](#config-files)
 
-  * [grammar Editors](#grammar-editors)
+  * [grammar Editors](#grammar-editors--class-editorsactions)
 
   * [grammar EditorLine & class EditorLineActions](#grammar-editorline--class-editorlineactions)
 
@@ -156,8 +156,8 @@ sub guieditors( --> Array[Str:D]) is export {
 
 [Top of Document](#table-of-contents)
 
-grammar Editors
----------------
+grammar Editors & action class EditorsActions
+---------------------------------------------
 
 ```raku
 grammar Editors is export {
@@ -193,6 +193,8 @@ class EditorsActions is export {
     }
 } # class EditorsActions #
 ```
+
+[Top of Document](#table-of-contents)
 
 [Top of Document](#table-of-contents)
 

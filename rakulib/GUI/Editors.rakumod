@@ -19,7 +19,7 @@ Table of Contents
 =item1 L<Introduction|#introduction>
 =item1 L<$editor-config|#editor-config>
 =item1 L<@config-files|#config-files>
-=item1 L<grammar Editors|#grammar-editors>
+=item1 L<grammar Editors|#grammar-editors--class-editorsactions>
 =item1 L<grammar EditorLine & class EditorLineActions|#grammar-editorline--class-editorlineactions>
 =item1 L<Some useful variables|#some-useful-variables>
 =item2 L<$GUI_EDITOR|#gui_editor>
@@ -268,7 +268,7 @@ sub generate-configs(Str $file) returns Bool:D {
 
 =begin pod
 
-=head2 grammar Editors
+=head2 grammar Editors & action class EditorsActions
 
 =begin code :lang<raku>
 
@@ -470,6 +470,8 @@ class EditorsActions is export {
 } # class EditorsActions #
 
 =begin pod
+
+L<Top of Document|#table-of-contents>
 
 =head3 grammar EditorLine & class EditorLineActions
 
