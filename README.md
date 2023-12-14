@@ -22,7 +22,7 @@ Table of Contents
 
   * [@config-files](#config-files)
 
-  * [grammar Editors](#grammar-editors--class-editorsactions)
+  * [grammar Editors & action class EditorsActions](#grammar-editors--action-class-editorsactions)
 
   * [grammar EditorLine & class EditorLineActions](#grammar-editorline--class-editorlineactions)
 
