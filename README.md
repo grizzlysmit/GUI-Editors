@@ -74,7 +74,7 @@ Table of Contents
 
     * [list-editors-backups(…)](#list-editors-backups)
 
-    * [Introduction](#introduction)
+    * [backups-menu-restore(…)](#backups-menu-restore)
 
     * [Introduction](#introduction)
 
@@ -289,6 +289,8 @@ class OverrideGUIEditorActions is export {
     }
 } # class OverrideGUIEditorActions #
 ```
+
+[Top of Document](#table-of-contents)
 
 Some useful variables
 ---------------------
@@ -590,11 +592,26 @@ List all the available backups in the **`$editor-config`**.
 sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export
 ```
 
-### backups-menu-restore
+### backups-menu-restore(…)
+
+Presents a menu so you can choose which backup to restore from.
 
 ```raku
-
+sub backups-menu-restore(Bool:D $colour, Bool:D $syntax,
+                                    Str:D $message = "" --> Bool:D) is export
 ```
+
+  * Where:
+
+    * **`$colour`** if **`True`** represents the menu in colours.
+
+    * **`$syntax`** if **`True`** represents the menu in colours.
+
+      * for now $syntax just does the same as **`colour`**, but in future it will lead to a more complex formatting.
+
+        * uses the **`Gzz::Text::Utils::menu(…)`**, which uses the **`Gzz::Text::Utils::dropdown(…)`** function for colour and syntax.
+
+[Top of Document](#table-of-contents)
 
 ### edit-files(…)
 

@@ -45,7 +45,7 @@ Table of Contents
 =item2 L<backup-editors(…)|#backup-editors>
 =item2 L<restore-editors(…)|#restore-editors>
 =item2 L<list-editors-backups(…)|#list-editors-backups>
-=item2 L<Introduction|#introduction>
+=item2 L<backups-menu-restore(…)|#backups-menu-restore>
 =item2 L<Introduction|#introduction>
 =item2 L<edit-files(…)|#edit-files>
 
@@ -680,6 +680,8 @@ class OverrideGUIEditorActions is export {
 } # class OverrideGUIEditorActions #
 
 =end code
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 
@@ -1689,11 +1691,24 @@ sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is exp
 
 =begin pod
 
-=head3 backups-menu-restore
+=head3 backups-menu-restore(…)
+
+Presents a menu so you can choose which backup to restore from.
 
 =begin code :lang<raku>
 
+sub backups-menu-restore(Bool:D $colour, Bool:D $syntax,
+                                    Str:D $message = "" --> Bool:D) is export 
+
 =end code
+
+=item1 Where:
+=item2 B<C<$colour>> if B<C<True>> represents the menu in colours.
+=item2 B<C<$syntax>> if B<C<True>> represents the menu in colours.
+=item3 for now $syntax just does the same as B<C<colour>>, but in future it will lead to a more complex formatting.
+=item4 uses the B<C<Gzz::Text::Utils::menu(…)>>, which uses the B<C<Gzz::Text::Utils::dropdown(…)>> function for colour and syntax.
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 

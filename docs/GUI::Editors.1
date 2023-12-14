@@ -116,7 +116,7 @@ list\-editors\-backups(…) [#list-editors-backups]
 .RE
 .RS 2n
 .IP \(bu 2m
-Introduction [#introduction]
+backups\-menu\-restore(…) [#backups-menu-restore]
 .RE
 .RS 2n
 .IP \(bu 2m
@@ -337,6 +337,8 @@ class OverrideGUIEditorActions is export {
 
 .EE
 .RE
+.P
+Top of Document [#table-of-contents]
 .SS Some useful variables
 
 \fBNB: All these variables are available outside of the module as a sub of the same name\&. That way I can give read only access to them\&.\fR
@@ -679,13 +681,44 @@ sub list\-editors\-backups(Bool:D $colour is copy, Bool:D $syntax \-\-> True) is
 
 .EE
 .RE
-.SS backups\-menu\-restore
+.SS backups\-menu\-restore(…)
+
+Presents a menu so you can choose which backup to restore from\&.
 
 .RS 4m
 .EX
+sub backups\-menu\-restore(Bool:D $colour, Bool:D $syntax,
+                                    Str:D $message = "" \-\-> Bool:D) is export 
+
 
 .EE
 .RE
+.IP \(bu 2m
+Where:
+.RS 2n
+.IP \(bu 2m
+\fB$colour\fR if \fBTrue\fR represents the menu in colours\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$syntax\fR if \fBTrue\fR represents the menu in colours\&.
+.RE
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+for now $syntax just does the same as \fBcolour\fR, but in future it will lead to a more complex formatting\&.
+.RE
+.RE
+.RS 2n
+.RS 2n
+.RS 2n
+.IP \(bu 2m
+uses the \fBGzz::Text::Utils::menu(…)\fR, which uses the \fBGzz::Text::Utils::dropdown(…)\fR function for colour and syntax\&.
+.RE
+.RE
+.RE
+
+Top of Document [#table-of-contents]
 .SS edit\-files(…)
 
 Edit arbitrary files using chosen editor\&.
