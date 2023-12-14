@@ -26,6 +26,8 @@ Table of Contents
 
   * [grammar EditorLine & class EditorLineActions](#grammar-editorline--class-editorlineactions)
 
+  * [grammar OverrideGUIEditor & actions class OverrideGUIEditorActions](#grammar-overrideguieditor--actions-class-overrideguieditoractions)
+
   * [Some useful variables](#some-useful-variables)
 
     * [$GUI_EDITOR](#gui_editor)
@@ -196,8 +198,6 @@ class EditorsActions is export {
 
 [Top of Document](#table-of-contents)
 
-[Top of Document](#table-of-contents)
-
 ### grammar EditorLine & class EditorLineActions
 
 A grammar and associated action class to parse and recognise the **`editor := value # comment`** lines in the **editors** file.
@@ -252,6 +252,42 @@ class EditorLineActions is export {
         $made.make: %top;
     }
 } # class EditorLineActions #
+```
+
+[Top of Document](#table-of-contents)
+
+### grammar OverrideGUIEditor & actions class OverrideGUIEditorActions
+
+A grammar to parse/recognise the **`override GUI_EDITOR # comment`** line.
+
+```raku
+grammar OverrideGUIEditor is export {
+    regex TOP     { ^ \h* [ <commented> \h* ]? 'override' \h+ 'GUI_EDITOR' [ \h+ '#' <comment> ]? \h* $ }
+    regex comment { <-[\n]>* }
+    token commented { '#' }
+}
+
+class OverrideGUIEditorActions is export {
+    method comment($/) {
+        my $comment = (~$/).trim;
+        make $comment;
+    }
+    method commented($/) {
+        my $commented = (~$/).trim;
+        make $commented;
+    }
+    method TOP($made) {
+        my %top = type => 'override-gui_editor', :value;
+        if $made<commented> {
+            %top«value» = False;
+        }
+        if $made<comment> {
+            my $com = $made<comment>.made;
+            %top«comment» = $com;
+        }
+        $made.make: %top;
+    }
+} # class OverrideGUIEditorActions #
 ```
 
 Some useful variables

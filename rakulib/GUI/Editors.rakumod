@@ -21,6 +21,7 @@ Table of Contents
 =item1 L<@config-files|#config-files>
 =item1 L<grammar Editors & action class EditorsActions|#grammar-editors--action-class-editorsactions>
 =item1 L<grammar EditorLine & class EditorLineActions|#grammar-editorline--class-editorlineactions>
+=item1 L<grammar OverrideGUIEditor & actions class OverrideGUIEditorActions|#grammar-overrideguieditor--actions-class-overrideguieditoractions>
 =item1 L<Some useful variables|#some-useful-variables>
 =item2 L<$GUI_EDITOR|#gui_editor>
 =item2 L<$VISUAL|#visual>
@@ -471,8 +472,6 @@ class EditorsActions is export {
 
 =begin pod
 
-L<Top of Document|#table-of-contents>
-
 =head3 grammar EditorLine & class EditorLineActions
 
 A grammar and associated action class to parse and recognise the B<C<editor := value # comment>> lines in the B<editors> file.
@@ -530,6 +529,8 @@ class EditorLineActions is export {
 } # class EditorLineActions #
 
 =end code
+
+L<Top of Document|#table-of-contents>
 
 =end pod
 
@@ -641,6 +642,46 @@ class EditorLineActions is export {
         $made.make: %top;
     }
 } # class EditorLineActions #
+
+=begin pod
+
+=head3 grammar OverrideGUIEditor & actions class OverrideGUIEditorActions
+
+A grammar to parse/recognise the B<C<override GUI_EDITOR # comment>> line.
+
+=begin code :lang<raku>
+
+grammar OverrideGUIEditor is export {
+    regex TOP     { ^ \h* [ <commented> \h* ]? 'override' \h+ 'GUI_EDITOR' [ \h+ '#' <comment> ]? \h* $ }
+    regex comment { <-[\n]>* }
+    token commented { '#' }
+}
+
+class OverrideGUIEditorActions is export {
+    method comment($/) {
+        my $comment = (~$/).trim;
+        make $comment;
+    }
+    method commented($/) {
+        my $commented = (~$/).trim;
+        make $commented;
+    }
+    method TOP($made) {
+        my %top = type => 'override-gui_editor', :value;
+        if $made<commented> {
+            %top«value» = False;
+        }
+        if $made<comment> {
+            my $com = $made<comment>.made;
+            %top«comment» = $com;
+        }
+        $made.make: %top;
+    }
+} # class OverrideGUIEditorActions #
+
+=end code
+
+=end pod
 
 grammar OverrideGUIEditor is export {
     regex TOP     { ^ \h* [ <commented> \h* ]? 'override' \h+ 'GUI_EDITOR' [ \h+ '#' <comment> ]? \h* $ }
