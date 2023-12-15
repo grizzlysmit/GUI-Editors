@@ -93,7 +93,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-0.1.1
+0.1.2
 
 TITLE
 =====
@@ -197,7 +197,7 @@ class EditorsActions does BasePathsActions is export {
     method editor($/) {
         my $ed-name;
         if $/<base-path> {
-            $ed-name = $/<base-path>.made ~ '/' ~ $/<editor-name>.made;
+            $ed-name = $/<base-path>.made ~ $/<editor-name>.made;
         } else {
             $ed-name = $/<editor-name>.made;
         }

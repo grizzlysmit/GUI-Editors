@@ -23,6 +23,6 @@
         "bugtracker" : "https://github.com/grizzlysmit/GUI-Editors/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "0.1.1",
+    "version" : "0.1.2",
     "tags" : [ "preferences", "Editors", "GUI", "user" ]
 }
