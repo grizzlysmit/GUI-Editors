@@ -689,70 +689,119 @@ sub guieditors( --&gt; Array[Str:D]) is export {
 }
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="grammar_Editors_&amp;_action_class_EditorsActions"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar Editors &amp; action class EditorsActions</a></h2>
-<pre class="pod-block-code">grammar Editors is export {
+<pre class="pod-block-code">grammar Editors is BasePaths is export {
     regex TOP                 { [ &lt;line&gt; [ \v+ &lt;line&gt; ]* \v* ]? }
     regex line                { [ &lt;white-space-line&gt; || &lt;override-gui_editor&gt; || &lt;config-line&gt; || &lt;editor-to-use&gt; || &lt;comment-line&gt; ] }
     regex white-space-line    { ^^ \h* $$ }
-    regex override-gui_editor { ^^ \h* 'override' \h+ 'GUI_EDITOR' \h* $$ }
+    regex override-gui_editor { ^^ \h* 'override' \h+ 'GUI_EDITOR' [ \h+ '#' &lt;comment&gt; ]? \h* $$ }
     regex comment-line        { ^^ \h* '#' &lt;-[\v]&gt;* $$ }
     regex config-line         { ^^ \h* 'guieditors' \h* '+'? '=' \h* &lt;editor&gt; \h* [ '#' &lt;comment&gt; \h* ]? $$ }
     regex editor-to-use       { ^^ \h* 'editor' \h* ':'? '=' \h* &lt;editor&gt; \h* [ '#' &lt;comment&gt; \h* ]? $$ }
-    regex editor              { &lt;editor-name&gt; || &lt;path&gt; &lt;editor-name&gt; }
+    regex editor              { &lt;editor-name&gt; || &lt;base-path&gt; &lt;editor-name&gt; }
     regex comment             { &lt;-[\n]&gt;* }
-    regex path                { &lt;lead-in&gt;  &lt;path-segments&gt;? }
-    regex lead-in             { [ '/' | '~' | '~/' ] }
-    regex path-segments       { &lt;path-segment&gt; [ '/' &lt;path-segment&gt; ]* '/' }
-    token path-segment        { [ &lt;with-space-in-it&gt; || &lt;with-other-stuff&gt; ] }
-    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
-    token with-other-stuff    { &lt;start-other-stuff&gt; &lt;tail-other-stuff&gt;* }
-    token start-other-stuff   { \w+ }
-    token tail-other-stuff    { &lt;other-stuff&gt;+ &lt;tails-tail&gt;? }
-    token tails-tail          { \w+ }
-    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&amp;' || '%' || '.' ] }
     token editor-name         { &lt;with-other-stuff&gt; }
 }
 
-class EditorsActions is export {
-    ...
-    ...
-    ...
+class EditorsActions does BasePathsActions is export {
+    method white-space-line($/) {
+        my %wspln = type =&gt; 'white-space-line', value =&gt; ~$/;
+        make %wspln;
+    }
+    method comment-line($/) {
+        my %comln = type =&gt; 'comment-line', value =&gt; ~$/;
+        make %comln;
+    }
+    #token editor-name         { &lt;with-other-stuff&gt; }
+    method editor-name($/) {
+        my $edname = $/&lt;with-other-stuff&gt;.made;
+        make $edname;
+    }
+    method editor($/) {
+        my $ed-name;
+        if $/&lt;base-path&gt; {
+            $ed-name = $/&lt;base-path&gt;.made ~ '/' ~ $/&lt;editor-name&gt;.made;
+        } else {
+            $ed-name = $/&lt;editor-name&gt;.made;
+        }
+        make $ed-name;
+    }
+    method comment($/) {
+        my $comm = (~$/).trim;
+        make $comm;
+    }
+    method config-line($/) {
+        my %cfg-line = type =&gt; 'config-line', value =&gt; $/&lt;editor&gt;.made;
+        if $/&lt;comment&gt; {
+            my $com = $/&lt;comment&gt;.made;
+            %cfg-line«comment» = $com;
+        }
+        make %cfg-line;
+    }
+    method editor-to-use($/) {
+        my %editor-to-use = type =&gt; 'editor-to-use', value =&gt; $/&lt;editor&gt;.made;
+        if $/&lt;comment&gt; {
+            my $com = $/&lt;comment&gt;.made;
+            %editor-to-use«comment» = $com;
+        }
+        make %editor-to-use;
+    }
+    method override-gui_editor($/) {
+        my %override-gui_editor = type =&gt; 'override-gui_editor', :value;
+        if $/&lt;comment&gt; {
+            my $com = $/&lt;comment&gt;.made;
+            %override-gui_editor«comment» = $com;
+        }
+        make %override-gui_editor;
+    }
+    method line($/) {
+        my %ln;
+        if $/&lt;white-space-line&gt; {
+            %ln = $/&lt;white-space-line&gt;.made;
+        } elsif $/&lt;comment-line&gt; {
+            %ln = $/&lt;comment-line&gt;.made;
+        } elsif $/&lt;config-line&gt; {
+            %ln = $/&lt;config-line&gt;.made;
+        } elsif $/&lt;editor-to-use&gt; {
+            %ln = $/&lt;editor-to-use&gt;.made;
+        } elsif $/&lt;override-gui_editor&gt; {
+            %ln = $/&lt;override-gui_editor&gt;.made;
+        }
+        make %ln;
+    }
     method TOP($made) {
         my @top = $made&lt;line&gt;».made;
         $made.make: @top;
     }
-} # class EditorsActions #
+} # class EditorsActions does BasePathsActions is export #
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="grammar_EditorLine_&amp;_class_EditorLineActions"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar EditorLine &amp; class EditorLineActions</a></h3>
-<p>A grammar and associated action class to parse and recognise the <strong><code>editor := value # comment</code></strong> lines in the <strong>editors</strong> file.</p><pre class="pod-block-code">grammar EditorLine is export {
+<p>A grammar and associated action class to parse and recognise the <strong><code>editor := value # comment</code></strong> lines in the <strong>editors</strong> file.</p><pre class="pod-block-code">grammar EditorLine is BasePaths is export {
     regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* &lt;editor&gt; \h* [ '#' &lt;comment&gt; \h* ]? $ }
-    regex editor              { &lt;editor-name&gt; || &lt;path&gt; &lt;editor-name&gt; }
+    regex editor              { &lt;editor-name&gt; || &lt;base-path&gt; &lt;editor-name&gt; }
     regex comment             { &lt;-[\n]&gt;* }
-    regex path                { &lt;lead-in&gt;  &lt;path-segments&gt;? }
-    regex lead-in             { [ '/' | '~' | '~/' ] }
-    regex path-segments       { &lt;path-segment&gt; [ '/' &lt;path-segment&gt; ]* '/' }
-    token path-segment        { [ &lt;with-space-in-it&gt; || &lt;with-other-stuff&gt; ] }
-    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
-    token with-other-stuff    { &lt;start-other-stuff&gt; &lt;tail-other-stuff&gt;* }
-    token start-other-stuff   { \w+ }
-    token tail-other-stuff    { &lt;other-stuff&gt;+ &lt;tails-tail&gt;? }
-    token tails-tail          { \w+ }
-    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&amp;' || '%' || '.' ] }
     token editor-name         { &lt;with-other-stuff&gt; }
 }
 
-class EditorLineActions is export {
-    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
-    method other-stuff($/) {
-        my $other-stuff = ~$/;
-        make $other-stuff;
+class EditorLineActions does BasePathsActions is export {
+    #token editor-name         { &lt;with-other-stuff&gt; }
+    method editor-name($/) {
+        my $edname = $/&lt;with-other-stuff&gt;.made;
+        make $edname;
     }
-
-</pre><ul>
-<li><p>...</p></li>
-<li><p>...</p></li>
-<li><p>...</p></li>
-</ul>
-<pre class="pod-block-code">    method config-line($/) {
+    method editor($/) {
+        my $ed-name;
+        if $/&lt;base-path&gt; {
+            $ed-name = $/&lt;base-path&gt;.made ~ '/' ~ $/&lt;editor-name&gt;.made;
+        } else {
+            $ed-name = $/&lt;editor-name&gt;.made;
+        }
+        make $ed-name;
+    }
+    method comment($/) {
+        my $comm = (~$/).trim;
+        make $comm;
+    }
+    method config-line($/) {
         my %cfg-line = type =&gt; 'config-line', value =&gt; $/&lt;editor&gt;.made;
         if $/&lt;comment&gt; {
             my $com = $/&lt;comment&gt;.made;
@@ -768,7 +817,7 @@ class EditorLineActions is export {
         }
         $made.make: %top;
     }
-} # class EditorLineActions #
+} # class EditorLineActions does BasePathsActions is export #
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="grammar_OverrideGUIEditor_&amp;_actions_class_OverrideGUIEditorActions"><a href="#GUI::Editors_0" class="u" title="go to top of document">grammar OverrideGUIEditor &amp; actions class OverrideGUIEditorActions</a></h3>
 <p>A grammar to parse/recognise the <strong><code>override GUI_EDITOR # comment</code></strong> line.</p><pre class="pod-block-code">grammar OverrideGUIEditor is export {
@@ -990,7 +1039,7 @@ sub editor( --&gt; Str:D) is export {
 <p>Edit arbitrary files using chosen editor.</p><pre class="pod-block-code">sub edit-files(Str:D @files --&gt; Bool:D) is export 
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-14T20:56:42Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-15T12:45:05Z</span></div></footer>
 	</body>
 </html>
 

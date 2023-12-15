@@ -67,6 +67,7 @@ use Terminal::ANSI::OO :t;
 use Terminal::Width;
 use Terminal::WCWidth;
 use Term::termios;
+use Parse::Paths;
 
 INIT my $debug = False;
 ####################################
@@ -273,54 +274,7 @@ sub generate-configs(Str $file) returns Bool:D {
 
 =begin code :lang<raku>
 
-grammar Editors is export {
-    regex TOP                 { [ <line> [ \v+ <line> ]* \v* ]? }
-    regex line                { [ <white-space-line> || <override-gui_editor> || <config-line> || <editor-to-use> || <comment-line> ] }
-    regex white-space-line    { ^^ \h* $$ }
-    regex override-gui_editor { ^^ \h* 'override' \h+ 'GUI_EDITOR' \h* $$ }
-    regex comment-line        { ^^ \h* '#' <-[\v]>* $$ }
-    regex config-line         { ^^ \h* 'guieditors' \h* '+'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
-    regex editor-to-use       { ^^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
-    regex editor              { <editor-name> || <path> <editor-name> }
-    regex comment             { <-[\n]>* }
-    regex path                { <lead-in>  <path-segments>? }
-    regex lead-in             { [ '/' | '~' | '~/' ] }
-    regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
-    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
-    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
-    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
-    token start-other-stuff   { \w+ }
-    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
-    token tails-tail          { \w+ }
-    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
-    token editor-name         { <with-other-stuff> }
-}
-
-class EditorsActions is export {
-    ...
-    ...
-    ...
-    method TOP($made) {
-        my @top = $made<line>».made;
-        $made.make: @top;
-    }
-} # class EditorsActions #
-
-=end code
-
-L<Top of Document|#table-of-contents>
-
-=end pod
-
-#`«««
-    ###############################################################################
-    #                                                                             #
-    #            grammars for parsing the `editors` configuration file            #
-    #                                                                             #
-    ###############################################################################
-#»»»
-
-grammar Editors is export {
+grammar Editors is BasePaths is export {
     regex TOP                 { [ <line> [ \v+ <line> ]* \v* ]? }
     regex line                { [ <white-space-line> || <override-gui_editor> || <config-line> || <editor-to-use> || <comment-line> ] }
     regex white-space-line    { ^^ \h* $$ }
@@ -328,22 +282,12 @@ grammar Editors is export {
     regex comment-line        { ^^ \h* '#' <-[\v]>* $$ }
     regex config-line         { ^^ \h* 'guieditors' \h* '+'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
     regex editor-to-use       { ^^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
-    regex editor              { <editor-name> || <path> <editor-name> }
+    regex editor              { <editor-name> || <base-path> <editor-name> }
     regex comment             { <-[\n]>* }
-    regex path                { <lead-in>  <path-segments>? }
-    regex lead-in             { [ '/' | '~' | '~/' ] }
-    regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
-    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
-    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
-    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
-    token start-other-stuff   { \w+ }
-    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
-    token tails-tail          { \w+ }
-    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
     token editor-name         { <with-other-stuff> }
 }
 
-class EditorsActions is export {
+class EditorsActions does BasePathsActions is export {
     method white-space-line($/) {
         my %wspln = type => 'white-space-line', value => ~$/;
         make %wspln;
@@ -352,70 +296,15 @@ class EditorsActions is export {
         my %comln = type => 'comment-line', value => ~$/;
         make %comln;
     }
-    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
-    method other-stuff($/) {
-        my $other-stuff = ~$/;
-        make $other-stuff;
-    }
-    #token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
-    method with-other-stuff($/) {
-        my @tailotherstuff;
-        if $/<tail-other-stuff> {
-            @tailotherstuff = $/<tail-other-stuff>».made;
-        }
-        my $with-other-stuff = $/<start-other-stuff>.made ~ @tailotherstuff.join();
-        make $with-other-stuff;
-    }
     #token editor-name         { <with-other-stuff> }
     method editor-name($/) {
         my $edname = $/<with-other-stuff>.made;
         make $edname;
     }
-    method lead-in($/) {
-        my $leadin = ~$/;
-        make $leadin;
-    }
-    #token with-space-in-it    { \w+ [ ' ' \w+ ]* }
-    method with-space-in-it($/) {
-        my $with-space-in-it = ~$/;
-        make $with-space-in-it;
-    }
-    #token start-other-stuff   { \w+ }
-    method start-other-stuff($/) {
-        my $start-other-stuff = ~$/;
-        make $start-other-stuff;
-    }
-    #token tails-tail          { \w+ }
-    method tails-tail($/) {
-        my $tails-tail = ~$/;
-        make $tails-tail;
-    }
-    #token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
-    method tail-other-stuff($/) {
-        my @otherstuff = $/<other-stuff>».made;
-        my $tail-other-stuff = @otherstuff.join();
-        if $/<tails-tail> {
-            $tail-other-stuff ~= $<tails-tail>.made;
-        }
-        make $tail-other-stuff;
-    }
-    #token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
-    method path-segment($/) {
-        my $path-segment = ~$/;
-        make $path-segment;
-    }
-    method path-segments($/) {
-        my @path-seg = $/<path-segment>».made;
-        make @path-seg.join('/');
-    }
-    method path($/) {
-        my Str $ed-path = $/<lead-in>.made ~ $/<path-segments>.made;
-        make $ed-path;
-    }
     method editor($/) {
         my $ed-name;
-        if $/<path> {
-            $ed-name = $/<path>.made ~ '/' ~ $/<editor-name>.made;
+        if $/<base-path> {
+            $ed-name = $/<base-path>.made ~ '/' ~ $/<editor-name>.made;
         } else {
             $ed-name = $/<editor-name>.made;
         }
@@ -468,7 +357,106 @@ class EditorsActions is export {
         my @top = $made<line>».made;
         $made.make: @top;
     }
-} # class EditorsActions #
+} # class EditorsActions does BasePathsActions is export #
+
+=end code
+
+L<Top of Document|#table-of-contents>
+
+=end pod
+
+#`«««
+    ###############################################################################
+    #                                                                             #
+    #            grammars for parsing the `editors` configuration file            #
+    #                                                                             #
+    ###############################################################################
+#»»»
+
+grammar Editors is BasePaths is export {
+    regex TOP                 { [ <line> [ \v+ <line> ]* \v* ]? }
+    regex line                { [ <white-space-line> || <override-gui_editor> || <config-line> || <editor-to-use> || <comment-line> ] }
+    regex white-space-line    { ^^ \h* $$ }
+    regex override-gui_editor { ^^ \h* 'override' \h+ 'GUI_EDITOR' [ \h+ '#' <comment> ]? \h* $$ }
+    regex comment-line        { ^^ \h* '#' <-[\v]>* $$ }
+    regex config-line         { ^^ \h* 'guieditors' \h* '+'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
+    regex editor-to-use       { ^^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $$ }
+    regex editor              { <editor-name> || <base-path> <editor-name> }
+    regex comment             { <-[\n]>* }
+    token editor-name         { <with-other-stuff> }
+}
+
+class EditorsActions does BasePathsActions is export {
+    method white-space-line($/) {
+        my %wspln = type => 'white-space-line', value => ~$/;
+        make %wspln;
+    }
+    method comment-line($/) {
+        my %comln = type => 'comment-line', value => ~$/;
+        make %comln;
+    }
+    #token editor-name         { <with-other-stuff> }
+    method editor-name($/) {
+        my $edname = $/<with-other-stuff>.made;
+        make $edname;
+    }
+    method editor($/) {
+        my $ed-name;
+        if $/<base-path> {
+            $ed-name = $/<base-path>.made ~ '/' ~ $/<editor-name>.made;
+        } else {
+            $ed-name = $/<editor-name>.made;
+        }
+        make $ed-name;
+    }
+    method comment($/) {
+        my $comm = (~$/).trim;
+        make $comm;
+    }
+    method config-line($/) {
+        my %cfg-line = type => 'config-line', value => $/<editor>.made;
+        if $/<comment> {
+            my $com = $/<comment>.made;
+            %cfg-line«comment» = $com;
+        }
+        make %cfg-line;
+    }
+    method editor-to-use($/) {
+        my %editor-to-use = type => 'editor-to-use', value => $/<editor>.made;
+        if $/<comment> {
+            my $com = $/<comment>.made;
+            %editor-to-use«comment» = $com;
+        }
+        make %editor-to-use;
+    }
+    method override-gui_editor($/) {
+        my %override-gui_editor = type => 'override-gui_editor', :value;
+        if $/<comment> {
+            my $com = $/<comment>.made;
+            %override-gui_editor«comment» = $com;
+        }
+        make %override-gui_editor;
+    }
+    method line($/) {
+        my %ln;
+        if $/<white-space-line> {
+            %ln = $/<white-space-line>.made;
+        } elsif $/<comment-line> {
+            %ln = $/<comment-line>.made;
+        } elsif $/<config-line> {
+            %ln = $/<config-line>.made;
+        } elsif $/<editor-to-use> {
+            %ln = $/<editor-to-use>.made;
+        } elsif $/<override-gui_editor> {
+            %ln = $/<override-gui_editor>.made;
+        }
+        make %ln;
+    }
+    method TOP($made) {
+        my @top = $made<line>».made;
+        $made.make: @top;
+    }
+} # class EditorsActions does BasePathsActions is export #
 
 =begin pod
 
@@ -478,144 +466,23 @@ A grammar and associated action class to parse and recognise the B<C<editor := v
 
 =begin code :lang<raku>
 
-grammar EditorLine is export {
+grammar EditorLine is BasePaths is export {
     regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $ }
-    regex editor              { <editor-name> || <path> <editor-name> }
+    regex editor              { <editor-name> || <base-path> <editor-name> }
     regex comment             { <-[\n]>* }
-    regex path                { <lead-in>  <path-segments>? }
-    regex lead-in             { [ '/' | '~' | '~/' ] }
-    regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
-    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
-    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
-    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
-    token start-other-stuff   { \w+ }
-    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
-    token tails-tail          { \w+ }
-    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
     token editor-name         { <with-other-stuff> }
 }
 
-class EditorLineActions is export {
-    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
-    method other-stuff($/) {
-        my $other-stuff = ~$/;
-        make $other-stuff;
-    }
-
-=end code
-
-=item1 ...
-=item1 ...
-=item1 ...
-
-=begin code :lang<raku>
-
-    method config-line($/) {
-        my %cfg-line = type => 'config-line', value => $/<editor>.made;
-        if $/<comment> {
-            my $com = $/<comment>.made;
-            %cfg-line«comment» = $com;
-        }
-        make %cfg-line;
-    }
-    method TOP($made) {
-        my %top = type => 'editor-to-use', value => $made<editor>.made;
-        if $made<comment> {
-            my $com = $made<comment>.made;
-            %top«comment» = $com;
-        }
-        $made.make: %top;
-    }
-} # class EditorLineActions #
-
-=end code
-
-L<Top of Document|#table-of-contents>
-
-=end pod
-
-grammar EditorLine is export {
-    regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $ }
-    regex editor              { <editor-name> || <path> <editor-name> }
-    regex comment             { <-[\n]>* }
-    regex path                { <lead-in>  <path-segments>? }
-    regex lead-in             { [ '/' | '~' | '~/' ] }
-    regex path-segments       { <path-segment> [ '/' <path-segment> ]* '/' }
-    token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
-    token with-space-in-it    { \w+ [ ' ' \w+ ]* }
-    token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
-    token start-other-stuff   { \w+ }
-    token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
-    token tails-tail          { \w+ }
-    token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '&' || '%' || '.' ] }
-    token editor-name         { <with-other-stuff> }
-}
-
-class EditorLineActions is export {
-    #token other-stuff         { [ '-' || '+' || ':' || '@' || '=' || ',' || '%' || '.' ] }
-    method other-stuff($/) {
-        my $other-stuff = ~$/;
-        make $other-stuff;
-    }
-    #token with-other-stuff    { <start-other-stuff> <tail-other-stuff>* }
-    method with-other-stuff($/) {
-        my @tailotherstuff;
-        if $/<tail-other-stuff> {
-            @tailotherstuff = $/<tail-other-stuff>».made;
-        }
-        my $with-other-stuff = $/<start-other-stuff>.made ~ @tailotherstuff.join();
-        make $with-other-stuff;
-    }
+class EditorLineActions does BasePathsActions is export {
     #token editor-name         { <with-other-stuff> }
     method editor-name($/) {
         my $edname = $/<with-other-stuff>.made;
         make $edname;
     }
-    method lead-in($/) {
-        my $leadin = ~$/;
-        make $leadin;
-    }
-    #token with-space-in-it    { \w+ [ ' ' \w+ ]* }
-    method with-space-in-it($/) {
-        my $with-space-in-it = ~$/;
-        make $with-space-in-it;
-    }
-    #token start-other-stuff   { \w+ }
-    method start-other-stuff($/) {
-        my $start-other-stuff = ~$/;
-        make $start-other-stuff;
-    }
-    #token tails-tail          { \w+ }
-    method tails-tail($/) {
-        my $tails-tail = ~$/;
-        make $tails-tail;
-    }
-    #token tail-other-stuff    { <other-stuff>+ <tails-tail>? }
-    method tail-other-stuff($/) {
-        my @otherstuff = $/<other-stuff>».made;
-        my $tail-other-stuff = @otherstuff.join();
-        if $/<tails-tail> {
-            $tail-other-stuff ~= $<tails-tail>.made;
-        }
-        make $tail-other-stuff;
-    }
-    #token path-segment        { [ <with-space-in-it> || <with-other-stuff> ] }
-    method path-segment($/) {
-        my $path-segment = ~$/;
-        make $path-segment;
-    }
-    method path-segments($/) {
-        my @path-seg = $/<path-segment>».made;
-        make @path-seg.join('/');
-    }
-    method path($/) {
-        my Str $ed-path = $/<lead-in>.made ~ $/<path-segments>.made;
-        make $ed-path;
-    }
     method editor($/) {
         my $ed-name;
-        if $/<path> {
-            $ed-name = $/<path>.made ~ '/' ~ $/<editor-name>.made;
+        if $/<base-path> {
+            $ed-name = $/<base-path>.made ~ '/' ~ $/<editor-name>.made;
         } else {
             $ed-name = $/<editor-name>.made;
         }
@@ -641,7 +508,57 @@ class EditorLineActions is export {
         }
         $made.make: %top;
     }
-} # class EditorLineActions #
+} # class EditorLineActions does BasePathsActions is export #
+
+=end code
+
+L<Top of Document|#table-of-contents>
+
+=end pod
+
+grammar EditorLine is BasePaths is export {
+    regex TOP                 { ^ \h* 'editor' \h* ':'? '=' \h* <editor> \h* [ '#' <comment> \h* ]? $ }
+    regex editor              { <editor-name> || <base-path> <editor-name> }
+    regex comment             { <-[\n]>* }
+    token editor-name         { <with-other-stuff> }
+}
+
+class EditorLineActions does BasePathsActions is export {
+    #token editor-name         { <with-other-stuff> }
+    method editor-name($/) {
+        my $edname = $/<with-other-stuff>.made;
+        make $edname;
+    }
+    method editor($/) {
+        my $ed-name;
+        if $/<base-path> {
+            $ed-name = $/<base-path>.made ~ '/' ~ $/<editor-name>.made;
+        } else {
+            $ed-name = $/<editor-name>.made;
+        }
+        make $ed-name;
+    }
+    method comment($/) {
+        my $comm = (~$/).trim;
+        make $comm;
+    }
+    method config-line($/) {
+        my %cfg-line = type => 'config-line', value => $/<editor>.made;
+        if $/<comment> {
+            my $com = $/<comment>.made;
+            %cfg-line«comment» = $com;
+        }
+        make %cfg-line;
+    }
+    method TOP($made) {
+        my %top = type => 'editor-to-use', value => $made<editor>.made;
+        if $made<comment> {
+            my $com = $made<comment>.made;
+            %top«comment» = $com;
+        }
+        $made.make: %top;
+    }
+} # class EditorLineActions does BasePathsActions is export #
 
 =begin pod
 
