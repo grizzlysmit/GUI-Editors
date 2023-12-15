@@ -11,7 +11,8 @@
         "Terminal::Width",
         "Terminal::WCWidth",
         "Gzz::Text::Utils",
-        "Syntax::Highlighters"
+        "Syntax::Highlighters",
+        "Parse::Paths"
     ],
     "provides" : {
         "GUI::Editors" : "rakulib/GUI/Editors.rakumod"
@@ -23,6 +24,6 @@
         "bugtracker" : "https://github.com/grizzlysmit/GUI-Editors/issues"
     },
     "auth": "zef:grizzlysmit",
-    "version" : "0.1.2",
+    "version" : "0.1.3",
     "tags" : [ "preferences", "Editors", "GUI", "user" ]
 }
