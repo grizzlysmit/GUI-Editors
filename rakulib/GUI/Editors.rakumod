@@ -55,6 +55,9 @@ Table of Contents
 =TITLE GUI::Editors
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
+=COPYRIGHT
+LGPL V3.0+ L<LICENSE|https://github.com/grizzlysmit/GUI-Editors/blob/main/LICENSE>
+
 L<Top of Document|#table-of-contents>
 
 =head1 Introduction

@@ -105,6 +105,11 @@ SUBTITLE
 
 A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
+COPYRIGHT
+=========
+
+LGPL V3.0+ [LICENSE](https://github.com/grizzlysmit/GUI-Editors/blob/main/LICENSE)
+
 [Top of Document](#table-of-contents)
 
 Introduction
