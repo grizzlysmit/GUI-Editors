@@ -1,5 +1,5 @@
 .pc
-.TH Editors.rakumod 1 2023-12-21
+.TH Editors.rakumod 1 2023-12-26
 .SH GUI::Editors
 .SS Table of Contents
 .IP \(bu 2m
@@ -80,10 +80,6 @@ list\-editors(…) [#list-editors]
 .RE
 .RS 2n
 .IP \(bu 2m
-list\-editors\-file(…) [#introduction]
-.RE
-.RS 2n
-.IP \(bu 2m
 editors\-stats(…) [#editors-stats]
 .RE
 .RS 2n
@@ -131,7 +127,7 @@ GUI::Editors
 .SH "AUTHOR"
 Francis Grizzly Smit (grizzly@smit\&.id\&.au)
 .SH "VERSION"
-0\&.1\&.3
+0\&.1\&.4
 .SH "TITLE"
 GUI::Editors
 .SH "SUBTITLE"
@@ -604,18 +600,9 @@ List all known GUI Editors, flagging the selected editor with \fB'*'\fR note if 
 
 .RS 4m
 .EX
-sub list\-editors(Bool:D $colour is copy, Bool:D $syntax \-\-> Bool) is export 
-
-
-.EE
-.RE
-.SS list\-editors\-file(…)
-
-List all GUI Editors in the configuration file\&.
-
-.RS 4m
-.EX
-sub list\-editors\-file(Bool:D $colour is copy, Bool:D $syntax \-\-> Bool) is export 
+sub list\-editors(Str:D $prefix, Bool:D $colour,
+                    Bool:D $syntax, Int:D $page\-length,
+                        Regex:D $pattern \-\-> Bool) is export 
 
 
 .EE
@@ -626,7 +613,9 @@ Show the values of some editors parameters\&.
 
 .RS 4m
 .EX
-sub editors\-stats(Bool:D $colour is copy, Bool:D $syntax \-\-> Bool) is export 
+sub editors\-stats(Str:D $prefix, Bool:D $colour,
+                    Bool:D $syntax, Int:D $page\-length,
+                        Regex:D $pattern \-\-> Bool) is export 
 
 
 .EE

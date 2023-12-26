@@ -1,4 +1,4 @@
-unit module GUI::Editors:ver<0.1.3>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
+unit module GUI::Editors:ver<0.1.4>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
 
 =begin pod
 
@@ -36,7 +36,6 @@ Table of Contents
 =item1 L<edit-configs()|#edit-configs>
 =item1 L<Editor functions|#editor-functions>
 =item2 L<list-editors(…)|#list-editors>
-=item2 L<list-editors-file(…)|#introduction>
 =item2 L<editors-stats(…)|#editors-stats>
 =item2 L<BadEditor|#badeditor>
 =item2 L<set-editor|#set-editor>
@@ -51,7 +50,7 @@ Table of Contents
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.3
+=VERSION 0.1.4
 =TITLE GUI::Editors
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
@@ -71,6 +70,8 @@ use Terminal::Width;
 use Terminal::WCWidth;
 use Term::termios;
 use Parse::Paths;
+use Display::Listings;
+use File::Utils;
 
 INIT my $debug = False;
 ####################################
@@ -1080,135 +1081,106 @@ or B<C<$editor>> is set to the empty string.
 
 =begin code :lang<raku>
 
-sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export 
+sub list-editors(Str:D $prefix, Bool:D $colour,
+                    Bool:D $syntax, Int:D $page-length,
+                        Regex:D $pattern --> Bool) is export 
 
 =end code
 
 =end pod
 
-sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
-    $colour = True if $syntax;
+sub list-editors(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-length, Regex:D $pattern --> Bool) is export {
     my Int:D $cnt = 0;
     my Str:D $mark = '';
-    my Str:D @all-guieditors;
+    my @all-guieditors;
     for (|@guieditors, |@gui-editors) -> $ed {
-        @all-guieditors.push: $ed if !@all-guieditors.grep: -> $e { $ed eq $e };
+        my %row = editor => $ed, mark => (($editor.trim.IO.basename eq $ed.trim.IO.basename) ?? '*' !! '');
+        @all-guieditors.push: %row if !@all-guieditors.grep: -> %row { $ed eq %row«editor» };
     }
-    if $colour {
+    my Str:D @fields     = 'editor', 'mark';
+    my Str:D %fancynames = editor => 'Editors', mark => 'Actual Editor';
+    my       %defaults;
+    my Str:D %flags      = editor => '-', mark => '';
+    sub include-row(Str:D $prefix, Regex:D $pattern, Int:D $idx, Str:D @fields, %row --> Bool:D) {
+        my Str:D $ed = ~%row«editor»;
+        return True if $ed.starts-with($prefix, :ignorecase) && $ed ~~ $pattern;
+        return False;
+    } # sub include-row(Str:D $prefix, Regex:D $pattern, Int:D $idx, Str:D @fields, %row --> Bool:D) #
+    sub head-value(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) {
         if $syntax {
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-30s %-14s", 'editors', 'actual editor') ~ t.text-reset;
-            $cnt++;
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '#' x 45) ~ t.text-reset;
-            $cnt++;
-            for @all-guieditors -> $ed {
-                if $editor.trim.IO.basename eq $ed.trim.IO.basename {
-                    $mark = '*';
-                } else {
-                    $mark = '';
-                }
-                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,255,0) ~ sprintf("%-30s ", $ed) ~ t.color(255,0,255) ~ sprintf("%-14s", $mark) ~ t.text-reset;
-                $cnt++;
-            } # @all-guieditors -> $ed #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '') ~ t.text-reset;
-            $cnt++;
-        } else { # if $syntax #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-30s %-14s", 'editors', 'actual editor') ~ t.text-reset;
-            $cnt++;
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '#' x 45) ~ t.text-reset;
-            $cnt++;
-            for @all-guieditors -> $ed {
-                if $editor.trim.IO.basename eq $ed.trim.IO.basename {
-                    $mark = '*';
-                } else {
-                    $mark = '';
-                }
-                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-30s %-14s", $ed, $mark) ~ t.text-reset;
-                $cnt++;
-            } # @all-guieditors -> $ed #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '') ~ t.text-reset;
-            $cnt++;
-        } # if $syntax else #
-    } else { # if $colour #
-        printf "%-30s %-10s\n", 'editors', 'actual editor';
-        ('#' x 44).say;
-        for @all-guieditors -> $ed {
-            if $editor.trim.IO.basename eq $ed.trim.IO.basename {
-                printf "%-30s %-10s\n", $ed, '*';
+            return t.color(0, 255, 255) ~ %fancynames{$field};
+        } elsif $colour {
+            return t.color(0, 255, 255) ~ %fancynames{$field};
+        } else {
+            return ~%fancynames{$field};
+        }
+    } # sub head-value(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) #
+    sub head-between(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) {
+        if $field eq 'editor' {
+            if $syntax {
+                return t.bright-blue ~ ' | ';
+            } elsif $colour {
+                return t.bright-blue ~ ' | ';
             } else {
-                $ed.say;
+                return ' | ';
             }
-        } # @all-guieditors -> $ed #
-        ''.say;
-    } # if $colour else #
-    return True;
-} # sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export #
-
-=begin pod
-
-=head3 list-editors-file(…)
-
-List all GUI Editors in the configuration file.
-
-=begin code :lang<raku>
-
-sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export 
-
-=end code
-
-=end pod
-
-sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
-    $colour = True if $syntax;
-    my Int:D $cnt = 0;
-    my Str:D $mark = '';
-    if $colour {
+        } else {
+            return '  ';
+        }
+    } # sub head-between(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) #
+    sub field-value(Int:D $idx, Str:D $field, $value, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) {
         if $syntax {
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-30s %-14s", 'editors', 'actual editor') ~ t.text-reset;
-            $cnt++;
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '#' x 45) ~ t.text-reset;
-            $cnt++;
-            for @gui-editors -> $ed {
-                if $editor.trim.IO.basename eq $ed.trim.IO.basename {
-                    $mark = '*';
-                } else {
-                    $mark = '';
-                }
-                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,255,0) ~ sprintf("%-30s ", $ed) ~ t.color(255,0,0) ~ sprintf("%-14s", $mark) ~ t.text-reset;
-                $cnt++;
-            } # @gui-editors -> $ed #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '') ~ t.text-reset;
-            $cnt++;
-        } else { # if $syntax #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-30s %-14s", 'editors', 'actual editor') ~ t.text-reset;
-            $cnt++;
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '#' x 45) ~ t.text-reset;
-            $cnt++;
-            for @gui-editors -> $ed {
-                if $editor.trim.IO.basename eq $ed.trim.IO.basename {
-                    $mark = '*';
-                } else {
-                    $mark = '';
-                }
-                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-30s %-14s", $ed, $mark) ~ t.text-reset;
-                $cnt++;
-            } # @gui-editors -> $ed #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-45s", '') ~ t.text-reset;
-            $cnt++;
-        } # if $syntax else #
-    } else { # if $colour #
-        printf "%-30s %-10s\n", 'editors', 'actual editor';
-        ('#' x 44).say;
-        for @gui-editors -> $ed {
-            if $editor.trim.IO.basename eq $ed.trim.IO.basename {
-                printf "%-30s %-10s\n", $ed, '*';
-            } else {
-                $ed.say;
+            given $field {
+                when 'editor' { return t.color(0,255,0) ~ ~$value; }
+                when 'mark'   { return t.color(255,0,0) ~ ~$value; }
+                default       { return t.color(255,0,0) ~ '';      }
             }
-        } # @gui-editors -> $ed #
-        ''.say;
-    } # if $colour else #
-    return True;
-} # sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export #
+        } elsif $colour {
+            return t.color(0,0,255) ~ ~$value;
+        } else {
+            return ~$value
+        }
+    } # sub field-value(Int:D $idx, Str:D $field, $value, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) #
+    sub between(Int:D $idx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) {
+        if $field eq 'editor' {
+            if $syntax {
+                return t.bright-blue ~ ' | ';
+            } elsif $colour {
+                return t.bright-blue ~ ' | ';
+            } else {
+                return ' | ';
+            }
+        } else {
+            return '  ';
+        }
+    } # sub between(Int:D $idx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) #
+    sub row-formatting(Int:D $cnt, Bool:D $colour, Bool:D $syntax --> Str:D) {
+        if $colour {
+            if $syntax { 
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -3; # three heading lines. #
+                return t.bg-color(0, 0, 127) ~ t.bold ~ t.bright-blue if $cnt == -2;
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -1;
+                return (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,195,0)) ~ t.bold ~ t.bright-blue;
+            } else {
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -3;
+                return t.bg-color(0, 0, 127) ~ t.bold ~ t.bright-blue if $cnt == -2;
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -1;
+                return (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,195,0)) ~ t.bold ~ t.bright-blue;
+            }
+        } else {
+            return '';
+        }
+    } # sub row-formatting(Int:D $cnt, Bool:D $colour, Bool:D $syntax --> Str:D) #
+    return list-by($prefix, $colour, $syntax, $page-length,
+                  $pattern, @fields, %defaults, @all-guieditors,
+                  :%flags, 
+                  :&include-row, 
+                  :&head-value, 
+                  :&head-between,
+                  :&field-value, 
+                  :&between,
+                  :&row-formatting);
+} #`««« sub list-editors(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-length, Regex:D $pattern --> Bool) is export »»»
 
 =begin pod
 
@@ -1218,7 +1190,9 @@ Show the values of some editors parameters.
 
 =begin code :lang<raku>
 
-sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export 
+sub editors-stats(Str:D $prefix, Bool:D $colour,
+                    Bool:D $syntax, Int:D $page-length,
+                        Regex:D $pattern --> Bool) is export 
 
 =end code
 
@@ -1226,8 +1200,7 @@ L<Top of Document|#table-of-contents>
 
 =end pod
 
-sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
-    $colour = True if $syntax;
+sub editors-stats(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-length, Regex:D $pattern --> Bool) is export {
     my Int:D $cnt = 0;
     my %editors = '%*ENV«GUI_EDITOR»' => $GUI_EDITOR,
                   '%*ENV<VISUAL>' => $VISUAL,
@@ -1236,55 +1209,97 @@ sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export {
                   '$override-GUI_EDITOR' => $override-GUI_EDITOR,
                   '@default-editors' => '[ ' ~ ((@default-editors) ?? '"' ~ @default-editors.join('", "') ~ '"' !! '') ~ ' ]', 
                   '@override-gui_editor' => '[' ~ @override-gui_editor.join(', ') ~ ']';
-    my Int:D $var-width        = 0;
-    my Int:D $value-width      = 0;
+    my @rows;
     for %editors.kv -> $var, $value {
-        $var-width         = max($var-width,     wcswidth($var));
-        $value-width       = max($value-width,   wcswidth($value));
+        my %h = var => $var, value => $value;
+        @rows.push: %h;
     } # for %editors.kv -> $var, $value #
-    $var-width = max($var-width,  30);
-    $var-width     += 2;
-    $value-width   += 2;
-    my Int:D $width = $var-width + $value-width + 4;
-    if $colour {
+    my Str:D @fields     = 'var', 'value';
+    my Str:D %fancynames = var => 'Variable', value => 'Value';
+    my       %defaults;
+    my Str:D %flags      = var => '-', value => '';
+    sub include-row(Str:D $prefix, Regex:D $pattern, Int:D $idx, Str:D @fields, %row --> Bool:D) {
+        for @fields -> $field {
+            my Str:D $value = ~%row{$field};
+            return True if $value.starts-with($prefix, :ignorecase) && $value ~~ $pattern;
+        }
+        return False;
+    } # sub include-row(Str:D $prefix, Regex:D $pattern, Int:D $idx, Str:D @fields, %row --> Bool:D) #
+    sub head-value(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) {
         if $syntax {
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s => %-*s", $var-width, 'variable', $value-width, 'value') ~ t.text-reset;
-            $cnt++;
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s", $width, '#' x $width) ~ t.text-reset;
-            $cnt++;
-            for %editors.keys.sort -> $var {
-                my $value = %editors{$var};
-                my $highlightedvar   = highlight-var($var);
-                my $highlightedvalue = highlight-val($value);
-                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ left($highlightedvar, $var-width, :ref($var)) ~ t.red ~ ' => ' ~ left($highlightedvalue, $value-width, :ref("$value")) ~ t.text-reset;
-                $cnt++;
-            } # %editors.keys.sort -> $var #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s", $width, '') ~ t.text-reset;
-            $cnt++;
-        } else { # if $syntax #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s => %-*s", $var-width, 'variable', $value-width, 'value') ~ t.text-reset;
-            $cnt++;
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s", $width, '#' x $width) ~ t.text-reset;
-            $cnt++;
-            for %editors.keys.sort -> $var {
-                my $value = %editors{$var};
-                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s => %-*s", $var-width, $var, $value-width, $value) ~ t.text-reset;
-                $cnt++;
-            } # %editors.keys.sort -> $var #
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-*s", $width, '') ~ t.text-reset;
-            $cnt++;
-        } # if $syntax else #
-    } else { # if $colour #
-        printf "%-*s => %-*s\n", $var-width, 'variable', $value-width, 'value';
-        ('#' x $width).say;
-        for %editors.keys.sort -> $var {
-                my $value = %editors{$var};
-            printf "%-*s => %-*s\n", $var-width, $var, $value-width, $value;
-        } # %editors.keys.sort -> $var #
-        ''.say;
-    } # if $colour else #
-    return True;
-} # sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export #
+            return t.color(0, 255, 255) ~ %fancynames{$field};
+        } elsif $colour {
+            return t.color(0, 255, 255) ~ %fancynames{$field};
+        } else {
+            return ~%fancynames{$field};
+        }
+    } # sub head-value(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) #
+    sub head-between(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) {
+        if $field eq 'var' {
+            if $syntax {
+                return t.bright-blue ~ '   |   ';
+            } elsif $colour {
+                return t.bright-blue ~ '   |   ';
+            } else {
+                return '   |   ';
+            }
+        } else {
+            return '  ';
+        }
+    } # sub head-between(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) #
+    sub field-value(Int:D $idx, Str:D $field, $value, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) {
+        if $syntax {
+            given $field {
+                when 'var'   { return highlight-var(~$value); }
+                when 'value' { return highlight-val(~$value); }
+                default      { return '';      }
+            }
+        } elsif $colour {
+            return t.color(0,0,255) ~ ~$value;
+        } else {
+            return ~$value
+        }
+    } # sub field-value(Int:D $idx, Str:D $field, $value, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) #
+    sub between(Int:D $idx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) {
+        if $field eq 'var' {
+            if $syntax {
+                return t.bright-blue ~ '   |   ';
+            } elsif $colour {
+                return t.bright-blue ~ '   |   ';
+            } else {
+                return '   |   ';
+            }
+        } else {
+            return '  ';
+        }
+    } # sub between(Int:D $idx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) #
+    sub row-formatting(Int:D $cnt, Bool:D $colour, Bool:D $syntax --> Str:D) {
+        if $colour {
+            if $syntax { 
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -3; # three heading lines. #
+                return t.bg-color(0, 0, 127) ~ t.bold ~ t.bright-blue if $cnt == -2;
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -1;
+                return (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,195,0)) ~ t.bold ~ t.bright-blue;
+            } else {
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -3;
+                return t.bg-color(0, 0, 127) ~ t.bold ~ t.bright-blue if $cnt == -2;
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -1;
+                return (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,195,0)) ~ t.bold ~ t.bright-blue;
+            }
+        } else {
+            return '';
+        }
+    } # sub row-formatting(Int:D $cnt, Bool:D $colour, Bool:D $syntax --> Str:D) #
+    return list-by($prefix, $colour, $syntax, $page-length,
+                  $pattern, @fields, %defaults, @rows,
+                  :%flags, 
+                  :&include-row, 
+                  :&head-value, 
+                  :&head-between,
+                  :&field-value, 
+                  :&between,
+                  :&row-formatting);
+} # sub editors-stats(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-length, Regex:D $pattern --> Bool) is export #
 
 =begin pod
 
@@ -1566,7 +1581,11 @@ L<Top of Document|#table-of-contents>
 
 =end pod
 
-sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export {
+sub list-editors-backups(Str:D $prefix,
+                         Bool:D $colour is copy,
+                         Bool:D $syntax,
+                         Regex:D $pattern,
+                         Int:D $page-length --> Bool:D) is export {
     $colour = True if $syntax;
     my IO::Path @backups = $editor-config.IO.dir(:test(rx/ ^ 
                                                            'editors.' \d ** 4 '-' \d ** 2 '-' \d ** 2
@@ -1583,37 +1602,126 @@ sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is exp
                                 Editors.parse(@file.join("\x0A"), :enc('UTF-8'), :$actions).made;
                             };
     @backups .=sort;
-    my Int:D $cnt = 0;
-    if $colour {
-        if $syntax {
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-80s", 'backup') ~ t.text-reset;
-            $cnt++;
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ Sprintf("%-[=]80s", '') ~ t.text-reset;
-            $cnt++;
-            for @backups -> $file {
-                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-80s", $file.basename)
-                                                                                                                                    ~ t.text-reset;
-                $cnt++;
+    my @_backups = @backups.map: -> IO::Path $f {
+          my %elt = backup => $f.basename, perms => symbolic-perms($f, :$colour, :$syntax),
+                      user => $f.user, group => $f.group, size => $f.s, modified => $f.modified;
+          %elt;
+    };
+    my Str:D @fields = 'perms', 'size', 'user', 'group', 'modified', 'backup';
+    my       %defaults;
+    my Str:D %fancynames = perms => 'Permissions', size => 'Size',
+                             user => 'User', group => 'Group',
+                             modified => 'Date Modified', backup => 'Backup';
+    sub include-row(Str:D $prefix, Regex:D $pattern, Int:D $idx, Str:D @fields, %row --> Bool:D) {
+        my Str:D $value = ~(%row«backup» // '');
+        return True if $value.starts-with($prefix, :ignorecase) && $value ~~ $pattern;
+        return False;
+    } # sub include-row(Str:D $prefix, Regex:D $pattern, Int:D $idx, Str:D @fields, %row --> Bool:D) #
+    sub head-value(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) {
+        #dd $indx, $field, $colour, $syntax, @fields;
+        if $colour {
+            if $syntax { 
+                return t.color(0, 255, 255) ~ %fancynames{$field};
+            } else {
+                return t.color(0, 255, 255) ~ %fancynames{$field};
             }
         } else {
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-80s", 'backup') ~ t.text-reset;
-            $cnt++;
-            put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ Sprintf("%-[=]80s", '') ~ t.text-reset;
-            $cnt++;
-            for @backups -> $file {
-                put (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,127,0)) ~ t.bold ~ t.color(0,0,255) ~ sprintf("%-80s", $file.basename)
-                                                                                                                                    ~ t.text-reset;
-                $cnt++;
+            return %fancynames{$field};
+        }
+    } # sub head-value(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) #
+    sub head-between(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) {
+        return ' ';
+    } # sub head-between(Int:D $indx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields --> Str:D) #
+    sub field-value(Int:D $idx, Str:D $field, $value, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) {
+        my Str:D $val = ~($value // ''); #`««« assumming $value is a Str:D »»»
+        #dd $val, $value, $field;
+        if $syntax {
+            given $field {
+                when 'perms'    { return $val; }
+                when 'size'     {
+                    my Int:D $size = +$value;
+                    return t.color(255, 0, 0) ~ format-bytes($size);
+                }
+                when 'user'     { return t.color(255, 255, 0) ~ uid2username(+$value);    }
+                when 'group'    { return t.color(255, 255, 0) ~ gid2groupname(+$value);   }
+                when 'modified' {
+                    my Instant:D $m = +$value;
+                    my DateTime:D $dt = $m.DateTime.local;
+                    return t.color(0, 0, 235) ~ $dt.Str;  
+                }
+                when 'backup'   { return t.color(255, 0, 255) ~ $val; }
+                default         { return t.color(255, 0, 0) ~ $val;   }
+            } # given $field #
+        } elsif $colour {
+            given $field {
+                when 'perms'    { return $val; }
+                when 'size'     {
+                    my Int:D $size = +$value;
+                    return t.color(0, 0, 255) ~ format-bytes($size);
+                }
+                when 'user'     { return t.color(0, 0, 255) ~ uid2username(+$value);    }
+                when 'group'    { return t.color(0, 0, 255) ~ gid2groupname(+$value);   }
+                when 'modified' {
+                    my Instant:D $m = +$value;
+                    my DateTime:D $dt = $m.DateTime.local;
+                    return t.color(0, 0, 255) ~ $dt.Str;  
+                }
+                when 'backup'   { return t.color(0, 0, 255) ~ $val;   }
+                default         { return t.color(255, 0, 0) ~ $val;   }
+            } # given $field #
+        } else {
+            given $field {
+                when 'perms'    { return $val; }
+                when 'size'     {
+                    my Int:D $size = +$value;
+                    return format-bytes($size);
+                }
+                when 'user'     { return uid2username(+$value);    }
+                when 'group'    { return gid2groupname(+$value);   }
+                when 'modified' {
+                    my Instant:D $m = +$value;
+                    my DateTime:D $dt = $m.DateTime.local;
+                    return $dt.Str;  
+                }
+                when 'backup'   { return $val;   }
+                default         { return $val;   }
+            } # given $field #
+        }
+    } # sub field-value(Int:D $idx, Str:D $field, $value, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) #
+    sub between(Int:D $idx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) {
+        return ' ';
+    } # sub between(Int:D $idx, Str:D $field, Bool:D $colour, Bool:D $syntax, Str:D @fields, %row --> Str:D) #
+    sub row-formatting(Int:D $cnt, Bool:D $colour, Bool:D $syntax --> Str:D) {
+        if $colour {
+            if $syntax { 
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -3; # three heading lines. #
+                return t.bg-color(0, 0, 127) ~ t.bold ~ t.bright-blue if $cnt == -2;
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -1;
+                return (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,195,0)) ~ t.bold ~ t.bright-blue;
+            } else {
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -3;
+                return t.bg-color(0, 0, 127) ~ t.bold ~ t.bright-blue if $cnt == -2;
+                return t.bg-color(255, 0, 255) ~ t.bold ~ t.bright-blue if $cnt == -1;
+                return (($cnt % 2 == 0) ?? t.bg-yellow !! t.bg-color(0,195,0)) ~ t.bold ~ t.bright-blue;
             }
+        } else {
+            return '';
         }
-    } else {
-        'backup'.say;
-        say '=' x 80;
-        for @backups -> $file {
-            $file.basename.say;
-        }
-    }
-} # sub list-editors-backups(Boo:D $colour is copy, Bool:D $syntax --> True) is export #
+    } # sub row-formatting(Int:D $cnt, Bool:D $colour, Bool:D $syntax --> Str:D) #
+    return list-by($prefix, $colour, $syntax, $page-length,
+                  $pattern, @fields, %defaults, @_backups,
+                  :!sort,
+                  :&include-row, 
+                  :&head-value, 
+                  :&head-between,
+                  :&field-value, 
+                  :&between,
+                  :&row-formatting);
+} #`««« sub list-editors-backups(Str:D $prefix,
+                         Bool:D $colour is copy,
+                         Bool:D $syntax,
+                         Regex:D $pattern,
+                         Int:D $page-length --> Bool:D) is export »»»
 
 =begin pod
 

@@ -24,7 +24,7 @@ Av8AAAD/AAAAAAAAAEAAAAAAAAAAGQAAAP/RAACR/35+/wAAAP8A+wL/AAAA2gAAAGX/AADa/35+
 AAAAZQAAAP8AAAD/AAAAAAAAAAAAAABlAAAA/4WFhQEAAAD/AAAAQAAAAAAAAAD/AAAA2gAAAGUA
 AAAAj/kAAAZgAAADgAAAgAEAAOAHAADgBwAAwAMAAIABAACAAQAAAAEAAAAAAAAAAAAAAAAAAAPA
 AACH4QAAzrMAAA==" rel="icon" type="image/x-icon" /><meta name="author" value="Francis Grizzly Smit (grizzly@smit.id.au)" />
-<meta name="version" value="0.1.3" />
+<meta name="version" value="0.1.4" />
 <style>.comment {
   color: #666; }
 
@@ -602,7 +602,6 @@ footer {
  <tr class="toc-level-2"><td class="toc-text"><a href="#edit-configs()">edit-configs()</a></td></tr>
  <tr class="toc-level-2"><td class="toc-text"><a href="#Editor_functions">Editor functions</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors(…)">list-editors(…)</a></td></tr>
- <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors-file(…)">list-editors-file(…)</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#editors-stats(…)">editors-stats(…)</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#BadEditor">BadEditor</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#set-editor(…)">set-editor(…)</a></td></tr>
@@ -648,7 +647,6 @@ footer {
 <li><p><a href="#editor-functions">Editor functions</a></p></li>
 <ul>
 <li><p><a href="#list-editors">list-editors(…)</a></p></li>
-<li><p><a href="#introduction">list-editors-file(…)</a></p></li>
 <li><p><a href="#editors-stats">editors-stats(…)</a></p></li>
 <li><p><a href="#badeditor">BadEditor</a></p></li>
 <li><p><a href="#set-editor">set-editor</a></p></li>
@@ -989,13 +987,14 @@ sub editor( --&gt; Str:D) is export {
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="Editor_functions"><a href="#GUI::Editors_0" class="u" title="go to top of document">Editor functions</a></h2>
 <h3 id="list-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors(…)</a></h3>
-<p>List all known GUI Editors, flagging the selected editor with <strong>'*'</strong> note if none is flagged either <strong><code>$editor</code></strong> is set to a non GUI Editor or <strong><code>$editor</code></strong> is set to the empty string.</p><pre class="pod-block-code">sub list-editors(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
-
-</pre></section><section name="pod"><h3 id="list-editors-file(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-file(…)</a></h3>
-<p>List all GUI Editors in the configuration file.</p><pre class="pod-block-code">sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
+<p>List all known GUI Editors, flagging the selected editor with <strong>'*'</strong> note if none is flagged either <strong><code>$editor</code></strong> is set to a non GUI Editor or <strong><code>$editor</code></strong> is set to the empty string.</p><pre class="pod-block-code">sub list-editors(Str:D $prefix, Bool:D $colour,
+                    Bool:D $syntax, Int:D $page-length,
+                        Regex:D $pattern --&gt; Bool) is export 
 
 </pre></section><section name="pod"><h3 id="editors-stats(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">editors-stats(…)</a></h3>
-<p>Show the values of some editors parameters.</p><pre class="pod-block-code">sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --&gt; Bool) is export 
+<p>Show the values of some editors parameters.</p><pre class="pod-block-code">sub editors-stats(Str:D $prefix, Bool:D $colour,
+                    Bool:D $syntax, Int:D $page-length,
+                        Regex:D $pattern --&gt; Bool) is export 
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="BadEditor"><a href="#GUI::Editors_0" class="u" title="go to top of document">BadEditor</a></h3>
 <p><strong><code>BadEditor</code></strong> is an Exception class for the <strong><code>GUI::Editors</code></strong> module.</p><pre class="pod-block-code">class BadEditor is Exception is export {
@@ -1044,7 +1043,7 @@ sub editor( --&gt; Str:D) is export {
 <p>Edit arbitrary files using chosen editor.</p><pre class="pod-block-code">sub edit-files(Str:D @files --&gt; Bool:D) is export 
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-21T02:40:19Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-26T04:46:58Z</span></div></footer>
 	</body>
 </html>
 

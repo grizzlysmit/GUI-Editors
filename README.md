@@ -56,8 +56,6 @@ Table of Contents
 
     * [list-editors(…)](#list-editors)
 
-    * [list-editors-file(…)](#introduction)
-
     * [editors-stats(…)](#editors-stats)
 
     * [BadEditor](#badeditor)
@@ -93,7 +91,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-0.1.3
+0.1.4
 
 TITLE
 =====
@@ -551,15 +549,9 @@ Editor functions
 List all known GUI Editors, flagging the selected editor with **'*'** note if none is flagged either **`$editor`** is set to a non GUI Editor or **`$editor`** is set to the empty string.
 
 ```raku
-sub list-editors(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
-```
-
-### list-editors-file(…)
-
-List all GUI Editors in the configuration file.
-
-```raku
-sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
+sub list-editors(Str:D $prefix, Bool:D $colour,
+                    Bool:D $syntax, Int:D $page-length,
+                        Regex:D $pattern --> Bool) is export
 ```
 
 ### editors-stats(…)
@@ -567,7 +559,9 @@ sub list-editors-file(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
 Show the values of some editors parameters.
 
 ```raku
-sub editors-stats(Bool:D $colour is copy, Bool:D $syntax --> Bool) is export
+sub editors-stats(Str:D $prefix, Bool:D $colour,
+                    Bool:D $syntax, Int:D $page-length,
+                        Regex:D $pattern --> Bool) is export
 ```
 
 [Top of Document](#table-of-contents)
