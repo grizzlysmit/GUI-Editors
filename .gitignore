@@ -5,3 +5,4 @@ sdist/
 .fez
 scratch/
 archive/
+.test/
