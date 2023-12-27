@@ -72,7 +72,7 @@ Table of Contents
 
     * [list-editors-backups(…)](#list-editors-backups)
 
-    * [backups-menu-restore(…)](#backups-menu-restore)
+    * [backups-menu-restore-editors(…)](#backups-menu-restore-editors)
 
     * [edit-files(…)](#edit-files)
 
@@ -89,7 +89,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-0.1.6
+0.1.7
 
 TITLE
 =====
@@ -641,12 +641,12 @@ sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is exp
 
 [Top of Document](#table-of-contents)
 
-### backups-menu-restore(…)
+### backups-menu-restore-editors(…)
 
 Presents a menu so you can choose which backup to restore from.
 
 ```raku
-sub backups-menu-restore(Bool:D $colour, Bool:D $syntax,
+sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax,
                                     Str:D $message = "" --> Bool:D) is export
 ```
 

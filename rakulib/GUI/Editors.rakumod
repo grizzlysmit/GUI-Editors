@@ -1,4 +1,4 @@
-unit module GUI::Editors:ver<0.1.6>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
+unit module GUI::Editors:ver<0.1.7>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
 
 =begin pod
 
@@ -44,12 +44,12 @@ Table of Contents
 =item2 L<backup-editors(…)|#backup-editors>
 =item2 L<restore-editors(…)|#restore-editors>
 =item2 L<list-editors-backups(…)|#list-editors-backups>
-=item2 L<backups-menu-restore(…)|#backups-menu-restore>
+=item2 L<backups-menu-restore-editors(…)|#backups-menu-restore-editors>
 =item2 L<edit-files(…)|#edit-files>
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.6
+=VERSION 0.1.7
 =TITLE GUI::Editors
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
@@ -1724,13 +1724,13 @@ sub list-editors-backups(Str:D $prefix,
 
 =begin pod
 
-=head3 backups-menu-restore(…)
+=head3 backups-menu-restore-editors(…)
 
 Presents a menu so you can choose which backup to restore from.
 
 =begin code :lang<raku>
 
-sub backups-menu-restore(Bool:D $colour, Bool:D $syntax,
+sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax,
                                     Str:D $message = "" --> Bool:D) is export 
 
 =end code
@@ -1745,7 +1745,7 @@ L<Top of Document|#table-of-contents>
 
 =end pod
 
-sub backups-menu-restore(Bool:D $colour, Bool:D $syntax, Str:D $message = "" --> Bool:D) is export {
+sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax, Str:D $message = "" --> Bool:D) is export {
     my IO::Path @backups = $editor-config.IO.dir(:test(rx/ ^ 
                                                            'editors.' \d ** 4 '-' \d ** 2 '-' \d ** 2
                                                                [ 'T' \d **2 [ [ '.' || ':' ] \d ** 2 ] ** {0..2} [ [ '.' || '·' ] \d+ 

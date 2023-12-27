@@ -24,7 +24,7 @@ Av8AAAD/AAAAAAAAAEAAAAAAAAAAGQAAAP/RAACR/35+/wAAAP8A+wL/AAAA2gAAAGX/AADa/35+
 AAAAZQAAAP8AAAD/AAAAAAAAAAAAAABlAAAA/4WFhQEAAAD/AAAAQAAAAAAAAAD/AAAA2gAAAGUA
 AAAAj/kAAAZgAAADgAAAgAEAAOAHAADgBwAAwAMAAIABAACAAQAAAAEAAAAAAAAAAAAAAAAAAAPA
 AACH4QAAzrMAAA==" rel="icon" type="image/x-icon" /><meta name="author" value="Francis Grizzly Smit (grizzly@smit.id.au)" />
-<meta name="version" value="0.1.6" />
+<meta name="version" value="0.1.7" />
 <style>.comment {
   color: #666; }
 
@@ -610,7 +610,7 @@ footer {
  <tr class="toc-level-3"><td class="toc-text"><a href="#backup-editors(…)">backup-editors(…)</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#restore-editors(…)">restore-editors(…)</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#list-editors-backups(…)">list-editors-backups(…)</a></td></tr>
- <tr class="toc-level-3"><td class="toc-text"><a href="#backups-menu-restore(…)">backups-menu-restore(…)</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-text"><a href="#backups-menu-restore-editors(…)">backups-menu-restore-editors(…)</a></td></tr>
  <tr class="toc-level-3"><td class="toc-text"><a href="#edit-files(…)">edit-files(…)</a></td></tr>
 </table></div>
 </nav><div id="GUI::Editors_0"></div><div class="subtitle"><p>A Raku module for managing the users GUI Editor preferences in a variety of programs.</p></div><div class="pod-body"><section name="___top"><h1 id="GUI::Editors"><a href="#___top" class="u" title="go to top of document">GUI::Editors</a></h1>
@@ -655,7 +655,7 @@ footer {
 <li><p><a href="#backup-editors">backup-editors(…)</a></p></li>
 <li><p><a href="#restore-editors">restore-editors(…)</a></p></li>
 <li><p><a href="#list-editors-backups">list-editors-backups(…)</a></p></li>
-<li><p><a href="#backups-menu-restore">backups-menu-restore(…)</a></p></li>
+<li><p><a href="#backups-menu-restore-editors">backups-menu-restore-editors(…)</a></p></li>
 <li><p><a href="#edit-files">edit-files(…)</a></p></li>
 </ul>
 </ul>
@@ -1021,8 +1021,8 @@ sub editor( --&gt; Str:D) is export {
 </pre><p>If <strong><code>$restore-from</code></strong> is relative and not found from the current directory <strong><code>$editor-config/$restore-from</code></strong> will be tried. </p></section><section name="pod"><h3 id="list-editors-backups(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-backups(…)</a></h3>
 <p>List all the available backups in the <strong><code>$editor-config</code></strong>.</p><pre class="pod-block-code">sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --&gt; True) is export
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="backups-menu-restore(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backups-menu-restore(…)</a></h3>
-<p>Presents a menu so you can choose which backup to restore from.</p><pre class="pod-block-code">sub backups-menu-restore(Bool:D $colour, Bool:D $syntax,
+</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="backups-menu-restore-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backups-menu-restore-editors(…)</a></h3>
+<p>Presents a menu so you can choose which backup to restore from.</p><pre class="pod-block-code">sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax,
                                     Str:D $message = &quot;&quot; --&gt; Bool:D) is export 
 
 </pre><ul>
@@ -1042,7 +1042,7 @@ sub editor( --&gt; Str:D) is export {
 <p>Edit arbitrary files using chosen editor.</p><pre class="pod-block-code">sub edit-files(Str:D @files --&gt; Bool:D) is export 
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-26T17:29:02Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-27T22:59:50Z</span></div></footer>
 	</body>
 </html>
 

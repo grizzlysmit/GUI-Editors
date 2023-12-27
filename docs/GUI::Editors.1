@@ -1,5 +1,5 @@
 .pc
-.TH Editors.rakumod 1 2023-12-27
+.TH Editors.rakumod 1 2023-12-28
 .SH GUI::Editors
 .SS Table of Contents
 .IP \(bu 2m
@@ -112,7 +112,7 @@ list\-editors\-backups(…) [#list-editors-backups]
 .RE
 .RS 2n
 .IP \(bu 2m
-backups\-menu\-restore(…) [#backups-menu-restore]
+backups\-menu\-restore\-editors(…) [#backups-menu-restore-editors]
 .RE
 .RS 2n
 .IP \(bu 2m
@@ -123,7 +123,7 @@ GUI::Editors
 .SH "AUTHOR"
 Francis Grizzly Smit (grizzly@smit\&.id\&.au)
 .SH "VERSION"
-0\&.1\&.6
+0\&.1\&.7
 .SH "TITLE"
 GUI::Editors
 .SH "SUBTITLE"
@@ -715,13 +715,13 @@ sub list\-editors\-backups(Bool:D $colour is copy, Bool:D $syntax \-\-> True) is
 .RE
 .P
 Top of Document [#table-of-contents]
-.SS backups\-menu\-restore(…)
+.SS backups\-menu\-restore\-editors(…)
 
 Presents a menu so you can choose which backup to restore from\&.
 
 .RS 4m
 .EX
-sub backups\-menu\-restore(Bool:D $colour, Bool:D $syntax,
+sub backups\-menu\-restore\-editors(Bool:D $colour, Bool:D $syntax,
                                     Str:D $message = "" \-\-> Bool:D) is export 
 
 
