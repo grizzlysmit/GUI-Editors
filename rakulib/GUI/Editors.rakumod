@@ -1,4 +1,4 @@
-unit module GUI::Editors:ver<0.1.9>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
+unit module GUI::Editors:ver<0.1.10>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
 
 =begin pod
 
@@ -30,10 +30,8 @@ Table of Contents
 =item2 L<@GUIEDITORS|#guieditors-2>
 =item2 L<@gui-editors|#gui-editors>
 =item2 L<@default-editors|#default-editors>
-=item2 L<@override-gui_editor|#override-gui_editor>
-=item3 L<@override-gui_editor|#override-gui-editor>
-=item2 L<$override-GUI_EDITOR|#override-gui_editor-1>
-=item3 L<$override-GUI_EDITOR|#override-gui-editor-1>
+=item2 L<@override-gui_editor|#override-gui_editor> L<on raku.land @override-gui_editor|#override-gui-editor>
+=item2 L<$override-GUI_EDITOR|#override-gui_editor-1> L<on raku.land $override-GUI_EDITOR|#override-gui-editor-1>
 =item3 L<In B«C«init-gui-editors»»|#in-init-gui-editors>
 =item2 L<$editor|#editor-1>
 =item1 L<edit-configs()|#edit-configs>
@@ -53,7 +51,7 @@ Table of Contents
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.9
+=VERSION 0.1.10
 =TITLE GUI::Editors
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 

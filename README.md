@@ -44,13 +44,9 @@ Table of Contents
 
     * [@default-editors](#default-editors)
 
-    * [@override-gui_editor](#override-gui_editor)
+    * [@override-gui_editor](#override-gui_editor) [on raku.land @override-gui_editor](#override-gui-editor)
 
-      * [@override-gui_editor](#override-gui-editor)
-
-    * [$override-GUI_EDITOR](#override-gui_editor-1)
-
-      * [$override-GUI_EDITOR](#override-gui-editor-1)
+    * [$override-GUI_EDITOR](#override-gui_editor-1) [on raku.land $override-GUI_EDITOR](#override-gui-editor-1)
 
       * [In **`init-gui-editors`**](#in-init-gui-editors)
 
@@ -97,7 +93,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-0.1.9
+0.1.10
 
 TITLE
 =====
