@@ -1,4 +1,4 @@
-unit module GUI::Editors:ver<0.1.7>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
+unit module GUI::Editors:ver<0.1.8>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
 
 =begin pod
 
@@ -49,7 +49,7 @@ Table of Contents
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.7
+=VERSION 0.1.8
 =TITLE GUI::Editors
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
