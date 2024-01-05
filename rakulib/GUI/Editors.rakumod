@@ -1080,15 +1080,21 @@ or B<C<$editor>> is set to the empty string.
 
 =begin code :lang<raku>
 
-sub list-editors(Str:D $prefix, Bool:D $colour,
-                    Bool:D $syntax, Int:D $page-length,
-                        Regex:D $pattern --> Bool) is export 
+sub list-editors(Str:D $prefix,
+                 Bool:D $colour,
+                 Bool:D $syntax,
+                 Int:D $page-length,
+                 Regex:D $pattern --> Bool) is export 
 
 =end code
 
 =end pod
 
-sub list-editors(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-length, Regex:D $pattern --> Bool) is export {
+sub list-editors(Str:D $prefix,
+                 Bool:D $colour,
+                 Bool:D $syntax,
+                 Int:D $page-length,
+                 Regex:D $pattern --> Bool) is export {
     my Int:D $cnt = 0;
     my Str:D $mark = '';
     my @all-guieditors;
@@ -1179,7 +1185,11 @@ sub list-editors(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-leng
                   :&field-value, 
                   :&between,
                   :&row-formatting);
-} #`««« sub list-editors(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-length, Regex:D $pattern --> Bool) is export »»»
+} #`««« sub list-editors(Str:D $prefix,
+                 Bool:D $colour,
+                 Bool:D $syntax,
+                 Int:D $page-length,
+                 Regex:D $pattern --> Bool) is export »»»
 
 =begin pod
 
@@ -1189,9 +1199,11 @@ Show the values of some editors parameters.
 
 =begin code :lang<raku>
 
-sub editors-stats(Str:D $prefix, Bool:D $colour,
-                    Bool:D $syntax, Int:D $page-length,
-                        Regex:D $pattern --> Bool) is export 
+sub editors-stats(Str:D $prefix,
+                  Bool:D $colour,
+                  Bool:D $syntax,
+                  Int:D $page-length,
+                  Regex:D $pattern --> Bool) is export 
 
 =end code
 
@@ -1199,7 +1211,11 @@ L<Top of Document|#table-of-contents>
 
 =end pod
 
-sub editors-stats(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-length, Regex:D $pattern --> Bool) is export {
+sub editors-stats(Str:D $prefix,
+                  Bool:D $colour,
+                  Bool:D $syntax,
+                  Int:D $page-length,
+                  Regex:D $pattern --> Bool) is export {
     my Int:D $cnt = 0;
     my %editors = '%*ENV«GUI_EDITOR»' => $GUI_EDITOR,
                   '%*ENV<VISUAL>' => $VISUAL,
@@ -1298,7 +1314,11 @@ sub editors-stats(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-len
                   :&field-value, 
                   :&between,
                   :&row-formatting);
-} # sub editors-stats(Str:D $prefix, Bool:D $colour, Bool:D $syntax, Int:D $page-length, Regex:D $pattern --> Bool) is export #
+} #`««« sub editors-stats(Str:D $prefix,
+                  Bool:D $colour,
+                  Bool:D $syntax,
+                  Int:D $page-length,
+                  Regex:D $pattern --> Bool) is export »»»
 
 =begin pod
 
@@ -1572,9 +1592,20 @@ List all the available backups in the B<C<$editor-config>>.
 
 =begin code :lang<raku>
 
-sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export
+sub list-editors-backups(Str:D $prefix,
+                         Bool:D $colour is copy,
+                         Bool:D $syntax,
+                         Regex:D $pattern,
+                         Int:D $page-length --> Bool:D) is export
 
 =end code
+
+=item1 Where
+=item2 B<C<$prefix>>       a filter only files starting with this are included in the result.
+=item2 B<C<$colour>>       colour the output.
+=item2 B<C<$syntax>>       syntax highlight the results colour on steroids.
+=item2 B<C<$pattern>>      a regex to filter the results by only files matching this will be included in the results.
+=item2 B<C<$page-length>>  set the length of the pages before it repeats the header.
 
 L<Top of Document|#table-of-contents>
 
@@ -1730,22 +1761,25 @@ Presents a menu so you can choose which backup to restore from.
 
 =begin code :lang<raku>
 
-sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax,
-                                    Str:D $message = "" --> Bool:D) is export 
+sub backups-menu-restore-editors(Bool:D $colour,
+                                 Bool:D $syntax,
+                                 Str:D $message = "" --> Bool:D) is export 
 
 =end code
 
 =item1 Where:
 =item2 B<C<$colour>> if B<C<True>> represents the menu in colours.
-=item2 B<C<$syntax>> if B<C<True>> represents the menu in colours.
-=item3 for now $syntax just does the same as B<C<colour>>, but in future it will lead to a more complex formatting.
+=item2 B<C<$syntax>> if B<C<True>> represents the menu syntax highlighted.
+=item3 basically colour on steroids.
 =item4 uses the B<C<Gzz::Text::Utils::menu(…)>>, which uses the B<C<Gzz::Text::Utils::dropdown(…)>> function for colour and syntax.
 
 L<Top of Document|#table-of-contents>
 
 =end pod
 
-sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax, Str:D $message = "" --> Bool:D) is export {
+sub backups-menu-restore-editors(Bool:D $colour,
+                                 Bool:D $syntax,
+                                 Str:D $message = "" --> Bool:D) is export {
     my IO::Path @backups = $editor-config.IO.dir(:test(rx/ ^ 
                                                            'editors.' \d ** 4 '-' \d ** 2 '-' \d ** 2
                                                                [ 'T' \d **2 [ [ '.' || ':' ] \d ** 2 ] ** {0..2} [ [ '.' || '·' ] \d+ 
@@ -1765,13 +1799,81 @@ sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax, Str:D $message 
                                 my @file = $fl.slurp.split("\n");
                                 Editors.parse(@file.join("\x0A"), :enc('UTF-8'), :$actions).made;
                             };
-    my Str:D @Backups = @backups.map: { .basename };
-    @Backups .=sort();
-    my Str $file = menu(@Backups, $message, :$colour, :$syntax);
+    my $highlight-bg-colour = t.bg-color(0, 0, 107) ~ t.bold;
+    my $highlight-fg-colour = t.color(255, 255, 0);
+    my @Backups = @backups.map: -> IO::Path $f {
+          my %elt = value => $f.Str, backup => $f.basename,
+                      perms => symbolic-perms($f, :$colour, :$syntax, :highlight-fg-colour(''),
+                                              :fg-colour0(''), :fg-colour1('')),
+                      user => uid2username($f.user), group => gid2groupname($f.group),
+                      size => format-bytes($f.s), modified => $f.modified.DateTime.local.Str;
+          %elt;
+    };
+    @Backups .=sort( -> %lhs, %rhs { %lhs«value».IO.basename cmp %rhs«value».IO.basename });
+    sub row(Int:D $cnt, Int:D $pos, @array,
+                                     Bool:D :$colour = False, Bool:D :$syntax = False,
+                                     Str:D :$highlight-bg-colour = '',
+                                     Str:D :$highlight-fg-colour = '',
+                                     Str:D :$bg-colour0 = '',
+                                     Str:D :$fg-colour0 = '', 
+                                     Str:D :$bg-colour1 = '',
+                                     Str:D :$fg-colour1 = ''  --> Str:D) {
+        my %r = @array[$cnt];
+        if $syntax {
+            if %r«value» eq 'cancel' {
+                return %r«name» if %r«name»:exists;
+                return %r«value»;
+            }
+            my Str:D $name = %r«perms» ~ ' ';
+            if $cnt == $pos {
+                $name ~= $highlight-bg-colour ~ t.color(255, 0, 0)   ~ %r«size»     ~ ' ';
+                $name ~= $highlight-bg-colour ~ t.color(255, 255, 0) ~ %r«user»     ~ ' ';
+                $name ~= $highlight-bg-colour ~ t.color(255, 255, 0) ~ %r«group»    ~ ' ';
+                $name ~= $highlight-bg-colour ~ t.color(0, 0, 255)   ~ %r«modified» ~ ' ';
+                $name ~= $highlight-bg-colour ~ t.color(255, 0, 255) ~ %r«backup»   ~ ' ';
+            } elsif $cnt %% 2 {
+                $name ~= $bg-colour0 ~ t.color(255, 0, 0)   ~ %r«size»     ~ ' ';
+                $name ~= $bg-colour0 ~ t.color(255, 255, 0) ~ %r«user»     ~ ' ';
+                $name ~= $bg-colour0 ~ t.color(255, 255, 0) ~ %r«group»    ~ ' ';
+                $name ~= $bg-colour0 ~ t.color(0, 0, 255)   ~ %r«modified» ~ ' ';
+                $name ~= $bg-colour0 ~ t.color(255, 0, 255) ~ %r«backup»   ~ ' ';
+            } else {
+                $name ~= $bg-colour1 ~ t.color(255, 0, 0)   ~ %r«size»     ~ ' ';
+                $name ~= $bg-colour1 ~ t.color(255, 255, 0) ~ %r«user»     ~ ' ';
+                $name ~= $bg-colour1 ~ t.color(255, 255, 0) ~ %r«group»    ~ ' ';
+                $name ~= $bg-colour1 ~ t.color(0, 0, 255)   ~ %r«modified» ~ ' ';
+                $name ~= $bg-colour1 ~ t.color(255, 0, 255) ~ %r«backup»   ~ ' ';
+            }
+        } elsif $colour {
+            if %r«value» eq 'cancel' {
+                return %r«name» if %r«name»:exists;
+                return %r«value»;
+            }
+            my Str:D $name = %r«size» ~ ' ' ~ %r«user» ~ ' ' ~ %r«group» ~ ' ' ~ %r«modified» ~ ' ' ~ %r«backup»;
+            if $cnt == $pos {
+                return $highlight-bg-colour ~ %r«perms» ~ ' ' ~ $highlight-fg-colour ~ $name;
+            } elsif $cnt %% 2 {
+                return $bg-colour0          ~ %r«perms» ~ ' ' ~ $fg-colour0          ~ $name;
+            } else {
+                return $bg-colour1          ~ %r«perms» ~ ' ' ~ $fg-colour1          ~ $name;
+            }
+        } else {
+            if %r«value» eq 'cancel' {
+                return %r«name» if %r«name»:exists;
+                return %r«value»;
+            }
+            my Str:D $name = %r«perms» ~ ' ' ~ %r«size» ~ ' ' ~ %r«user» ~ ' ' ~ %r«group» ~ ' ' ~ %r«modified» ~ ' ' ~ %r«backup»;
+            return $name;
+        }
+    }
+    my Str $file = menu(@Backups, $message, :&row, :$colour, :$syntax, :$highlight-bg-colour, :$highlight-fg-colour, :wrap-around);
     return False without $file;
     return False if $file eq '';
+    return False if $file eq 'cancel';
     return restore-editors($file.IO);
-}
+} #`««« sub backups-menu-restore-editors(Bool:D $colour,
+                                 Bool:D $syntax,
+                                 Str:D $message = "" --> Bool:D) is export »»»
 
 =begin pod
 
@@ -1784,6 +1886,9 @@ Edit arbitrary files using chosen editor.
 sub edit-files(Str:D @files --> Bool:D) is export 
 
 =end code
+
+=item1 Where
+=item2 B<C<@files>> a list of files to open in the chosen GUI editor.
 
 L<Top of Document|#table-of-contents>
 

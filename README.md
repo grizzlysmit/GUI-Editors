@@ -547,9 +547,11 @@ Editor functions
 List all known GUI Editors, flagging the selected editor with **'*'** note if none is flagged either **`$editor`** is set to a non GUI Editor or **`$editor`** is set to the empty string.
 
 ```raku
-sub list-editors(Str:D $prefix, Bool:D $colour,
-                    Bool:D $syntax, Int:D $page-length,
-                        Regex:D $pattern --> Bool) is export
+sub list-editors(Str:D $prefix,
+                 Bool:D $colour,
+                 Bool:D $syntax,
+                 Int:D $page-length,
+                 Regex:D $pattern --> Bool) is export
 ```
 
 ### editors-stats(…)
@@ -557,9 +559,11 @@ sub list-editors(Str:D $prefix, Bool:D $colour,
 Show the values of some editors parameters.
 
 ```raku
-sub editors-stats(Str:D $prefix, Bool:D $colour,
-                    Bool:D $syntax, Int:D $page-length,
-                        Regex:D $pattern --> Bool) is export
+sub editors-stats(Str:D $prefix,
+                  Bool:D $colour,
+                  Bool:D $syntax,
+                  Int:D $page-length,
+                  Regex:D $pattern --> Bool) is export
 ```
 
 [Top of Document](#table-of-contents)
@@ -636,8 +640,24 @@ If **`$restore-from`** is relative and not found from the current directory **`$
 List all the available backups in the **`$editor-config`**.
 
 ```raku
-sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is export
+sub list-editors-backups(Str:D $prefix,
+                         Bool:D $colour is copy,
+                         Bool:D $syntax,
+                         Regex:D $pattern,
+                         Int:D $page-length --> Bool:D) is export
 ```
+
+  * Where
+
+    * **`$prefix`** a filter only files starting with this are included in the result.
+
+    * **`$colour`** colour the output.
+
+    * **`$syntax`** syntax highlight the results colour on steroids.
+
+    * **`$pattern`** a regex to filter the results by only files matching this will be included in the results.
+
+    * **`$page-length`** set the length of the pages before it repeats the header.
 
 [Top of Document](#table-of-contents)
 
@@ -646,17 +666,18 @@ sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --> True) is exp
 Presents a menu so you can choose which backup to restore from.
 
 ```raku
-sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax,
-                                    Str:D $message = "" --> Bool:D) is export
+sub backups-menu-restore-editors(Bool:D $colour,
+                                 Bool:D $syntax,
+                                 Str:D $message = "" --> Bool:D) is export
 ```
 
   * Where:
 
     * **`$colour`** if **`True`** represents the menu in colours.
 
-    * **`$syntax`** if **`True`** represents the menu in colours.
+    * **`$syntax`** if **`True`** represents the menu syntax highlighted.
 
-      * for now $syntax just does the same as **`colour`**, but in future it will lead to a more complex formatting.
+      * basically colour on steroids.
 
         * uses the **`Gzz::Text::Utils::menu(…)`**, which uses the **`Gzz::Text::Utils::dropdown(…)`** function for colour and syntax.
 
@@ -669,6 +690,10 @@ Edit arbitrary files using chosen editor.
 ```raku
 sub edit-files(Str:D @files --> Bool:D) is export
 ```
+
+  * Where
+
+    * **`@files`** a list of files to open in the chosen GUI editor.
 
 [Top of Document](#table-of-contents)
 

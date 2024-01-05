@@ -986,14 +986,18 @@ sub editor( --&gt; Str:D) is export {
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h2 id="Editor_functions"><a href="#GUI::Editors_0" class="u" title="go to top of document">Editor functions</a></h2>
 <h3 id="list-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors(…)</a></h3>
-<p>List all known GUI Editors, flagging the selected editor with <strong>'*'</strong> note if none is flagged either <strong><code>$editor</code></strong> is set to a non GUI Editor or <strong><code>$editor</code></strong> is set to the empty string.</p><pre class="pod-block-code">sub list-editors(Str:D $prefix, Bool:D $colour,
-                    Bool:D $syntax, Int:D $page-length,
-                        Regex:D $pattern --&gt; Bool) is export 
+<p>List all known GUI Editors, flagging the selected editor with <strong>'*'</strong> note if none is flagged either <strong><code>$editor</code></strong> is set to a non GUI Editor or <strong><code>$editor</code></strong> is set to the empty string.</p><pre class="pod-block-code">sub list-editors(Str:D $prefix,
+                 Bool:D $colour,
+                 Bool:D $syntax,
+                 Int:D $page-length,
+                 Regex:D $pattern --&gt; Bool) is export 
 
 </pre></section><section name="pod"><h3 id="editors-stats(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">editors-stats(…)</a></h3>
-<p>Show the values of some editors parameters.</p><pre class="pod-block-code">sub editors-stats(Str:D $prefix, Bool:D $colour,
-                    Bool:D $syntax, Int:D $page-length,
-                        Regex:D $pattern --&gt; Bool) is export 
+<p>Show the values of some editors parameters.</p><pre class="pod-block-code">sub editors-stats(Str:D $prefix,
+                  Bool:D $colour,
+                  Bool:D $syntax,
+                  Int:D $page-length,
+                  Regex:D $pattern --&gt; Bool) is export 
 
 </pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="BadEditor"><a href="#GUI::Editors_0" class="u" title="go to top of document">BadEditor</a></h3>
 <p><strong><code>BadEditor</code></strong> is an Exception class for the <strong><code>GUI::Editors</code></strong> module.</p><pre class="pod-block-code">class BadEditor is Exception is export {
@@ -1019,19 +1023,34 @@ sub editor( --&gt; Str:D) is export {
 <p>Restore the editors file from a backup.</p><pre class="pod-block-code">sub restore-editors(IO::Path $restore-from --&gt; Bool) is export 
 
 </pre><p>If <strong><code>$restore-from</code></strong> is relative and not found from the current directory <strong><code>$editor-config/$restore-from</code></strong> will be tried. </p></section><section name="pod"><h3 id="list-editors-backups(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-backups(…)</a></h3>
-<p>List all the available backups in the <strong><code>$editor-config</code></strong>.</p><pre class="pod-block-code">sub list-editors-backups(Bool:D $colour is copy, Bool:D $syntax --&gt; True) is export
+<p>List all the available backups in the <strong><code>$editor-config</code></strong>.</p><pre class="pod-block-code">sub list-editors-backups(Str:D $prefix,
+                         Bool:D $colour is copy,
+                         Bool:D $syntax,
+                         Regex:D $pattern,
+                         Int:D $page-length --&gt; Bool:D) is export
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="backups-menu-restore-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backups-menu-restore-editors(…)</a></h3>
-<p>Presents a menu so you can choose which backup to restore from.</p><pre class="pod-block-code">sub backups-menu-restore-editors(Bool:D $colour, Bool:D $syntax,
-                                    Str:D $message = &quot;&quot; --&gt; Bool:D) is export 
+</pre><ul>
+<li><p>Where</p></li>
+<ul>
+<li><p><strong><code>$prefix</code></strong> a filter only files starting with this are included in the result.</p></li>
+<li><p><strong><code>$colour</code></strong> colour the output.</p></li>
+<li><p><strong><code>$syntax</code></strong> syntax highlight the results colour on steroids.</p></li>
+<li><p><strong><code>$pattern</code></strong> a regex to filter the results by only files matching this will be included in the results.</p></li>
+<li><p><strong><code>$page-length</code></strong> set the length of the pages before it repeats the header.</p></li>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="backups-menu-restore-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backups-menu-restore-editors(…)</a></h3>
+<p>Presents a menu so you can choose which backup to restore from.</p><pre class="pod-block-code">sub backups-menu-restore-editors(Bool:D $colour,
+                                 Bool:D $syntax,
+                                 Str:D $message = &quot;&quot; --&gt; Bool:D) is export 
 
 </pre><ul>
 <li><p>Where:</p></li>
 <ul>
 <li><p><strong><code>$colour</code></strong> if <strong><code>True</code></strong> represents the menu in colours.</p></li>
-<li><p><strong><code>$syntax</code></strong> if <strong><code>True</code></strong> represents the menu in colours.</p></li>
+<li><p><strong><code>$syntax</code></strong> if <strong><code>True</code></strong> represents the menu syntax highlighted.</p></li>
 <ul>
-<li><p>for now $syntax just does the same as <strong><code>colour</code></strong>, but in future it will lead to a more complex formatting.</p></li>
+<li><p>basically colour on steroids.</p></li>
 <ul>
 <li><p>uses the <strong><code>Gzz::Text::Utils::menu(…)</code></strong>, which uses the <strong><code>Gzz::Text::Utils::dropdown(…)</code></strong> function for colour and syntax.</p></li>
 </ul>
@@ -1041,8 +1060,14 @@ sub editor( --&gt; Str:D) is export {
 <p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="edit-files(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">edit-files(…)</a></h3>
 <p>Edit arbitrary files using chosen editor.</p><pre class="pod-block-code">sub edit-files(Str:D @files --&gt; Bool:D) is export 
 
-</pre><p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2023-12-27T22:59:50Z</span></div></footer>
+</pre><ul>
+<li><p>Where</p></li>
+<ul>
+<li><p><strong><code>@files</code></strong> a list of files to open in the chosen GUI editor.</p></li>
+</ul>
+</ul>
+<p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-05T10:00:21Z</span></div></footer>
 	</body>
 </html>
 

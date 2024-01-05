@@ -1,5 +1,5 @@
 .pc
-.TH Editors.rakumod 1 2023-12-28
+.TH Editors.rakumod 1 2024-01-05
 .SH GUI::Editors
 .SS Table of Contents
 .IP \(bu 2m
@@ -596,9 +596,11 @@ List all known GUI Editors, flagging the selected editor with \fB'*'\fR note if 
 
 .RS 4m
 .EX
-sub list\-editors(Str:D $prefix, Bool:D $colour,
-                    Bool:D $syntax, Int:D $page\-length,
-                        Regex:D $pattern \-\-> Bool) is export 
+sub list\-editors(Str:D $prefix,
+                 Bool:D $colour,
+                 Bool:D $syntax,
+                 Int:D $page\-length,
+                 Regex:D $pattern \-\-> Bool) is export 
 
 
 .EE
@@ -609,9 +611,11 @@ Show the values of some editors parameters\&.
 
 .RS 4m
 .EX
-sub editors\-stats(Str:D $prefix, Bool:D $colour,
-                    Bool:D $syntax, Int:D $page\-length,
-                        Regex:D $pattern \-\-> Bool) is export 
+sub editors\-stats(Str:D $prefix,
+                  Bool:D $colour,
+                  Bool:D $syntax,
+                  Int:D $page\-length,
+                  Regex:D $pattern \-\-> Bool) is export 
 
 
 .EE
@@ -708,12 +712,38 @@ List all the available backups in the \fB$editor\-config\fR\&.
 
 .RS 4m
 .EX
-sub list\-editors\-backups(Bool:D $colour is copy, Bool:D $syntax \-\-> True) is export
+sub list\-editors\-backups(Str:D $prefix,
+                         Bool:D $colour is copy,
+                         Bool:D $syntax,
+                         Regex:D $pattern,
+                         Int:D $page\-length \-\-> Bool:D) is export
 
 
 .EE
 .RE
-.P
+.IP \(bu 2m
+Where
+.RS 2n
+.IP \(bu 2m
+\fB$prefix\fR a filter only files starting with this are included in the result\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$colour\fR colour the output\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$syntax\fR syntax highlight the results colour on steroids\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$pattern\fR a regex to filter the results by only files matching this will be included in the results\&.
+.RE
+.RS 2n
+.IP \(bu 2m
+\fB$page\-length\fR set the length of the pages before it repeats the header\&.
+.RE
+
 Top of Document [#table-of-contents]
 .SS backups\-menu\-restore\-editors(…)
 
@@ -721,8 +751,9 @@ Presents a menu so you can choose which backup to restore from\&.
 
 .RS 4m
 .EX
-sub backups\-menu\-restore\-editors(Bool:D $colour, Bool:D $syntax,
-                                    Str:D $message = "" \-\-> Bool:D) is export 
+sub backups\-menu\-restore\-editors(Bool:D $colour,
+                                 Bool:D $syntax,
+                                 Str:D $message = "" \-\-> Bool:D) is export 
 
 
 .EE
@@ -735,12 +766,12 @@ Where:
 .RE
 .RS 2n
 .IP \(bu 2m
-\fB$syntax\fR if \fBTrue\fR represents the menu in colours\&.
+\fB$syntax\fR if \fBTrue\fR represents the menu syntax highlighted\&.
 .RE
 .RS 2n
 .RS 2n
 .IP \(bu 2m
-for now $syntax just does the same as \fBcolour\fR, but in future it will lead to a more complex formatting\&.
+basically colour on steroids\&.
 .RE
 .RE
 .RS 2n
@@ -764,5 +795,11 @@ sub edit\-files(Str:D @files \-\-> Bool:D) is export
 
 .EE
 .RE
-.P
+.IP \(bu 2m
+Where
+.RS 2n
+.IP \(bu 2m
+\fB@files\fR a list of files to open in the chosen GUI editor\&.
+.RE
+
 Top of Document [#table-of-contents]
