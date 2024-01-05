@@ -24,7 +24,7 @@ Av8AAAD/AAAAAAAAAEAAAAAAAAAAGQAAAP/RAACR/35+/wAAAP8A+wL/AAAA2gAAAGX/AADa/35+
 AAAAZQAAAP8AAAD/AAAAAAAAAAAAAABlAAAA/4WFhQEAAAD/AAAAQAAAAAAAAAD/AAAA2gAAAGUA
 AAAAj/kAAAZgAAADgAAAgAEAAOAHAADgBwAAwAMAAIABAACAAQAAAAEAAAAAAAAAAAAAAAAAAAPA
 AACH4QAAzrMAAA==" rel="icon" type="image/x-icon" /><meta name="author" value="Francis Grizzly Smit (grizzly@smit.id.au)" />
-<meta name="version" value="0.1.11" />
+<meta name="version" value="0.1.12" />
 <style>.comment {
   color: #666; }
 
@@ -1022,7 +1022,7 @@ sub editor( --&gt; Str:D) is export {
 </pre><p>If set then the file always wins else <strong><code>%*ENV«GUI_EDITOR»</code></strong> always wins if set.</p><p><a href="#table-of-contents">Top of Document</a></p></section><section name="pod"><h3 id="backup-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">backup-editors(…)</a></h3>
 <p>Backup the editors file.</p><pre class="pod-block-code">sub backup-editors(Bool:D $use-windows-formatting --&gt; Bool) is export 
 
-</pre><p><strong>NB: if $use-windows-formatting is true or the program is running on windows then B&lt;&lt;<code>.</code></strong> will become <strong><code>·</code></strong>&gt; and <strong><code>:</code></strong> will become <strong><code>.</code></strong>, this is to avoid problems with the special meaning of <strong><code>:</code></strong> on windows.</p></section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="restore-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">restore-editors(…)</a></h3>
+</pre><p><strong>NB: if $use-windows-formatting is true or the program is running on windows then <code>.</code> will become <code>·</code> and <code>:</code> will become <code>.</code>, this is to avoid problems with the special meaning of <code>:</code> on windows.</strong></p></section><section name="pod"><p><a href="#table-of-contents">Top of Document</a></p><h3 id="restore-editors(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">restore-editors(…)</a></h3>
 <p>Restore the editors file from a backup.</p><pre class="pod-block-code">sub restore-editors(IO::Path $restore-from --&gt; Bool) is export 
 
 </pre><p>If <strong><code>$restore-from</code></strong> is relative and not found from the current directory <strong><code>$editor-config/$restore-from</code></strong> will be tried. </p></section><section name="pod"><h3 id="list-editors-backups(…)"><a href="#GUI::Editors_0" class="u" title="go to top of document">list-editors-backups(…)</a></h3>
@@ -1070,7 +1070,7 @@ sub editor( --&gt; Str:D) is export {
 </ul>
 </ul>
 <p><a href="#table-of-contents">Top of Document</a></p></section>		</div>
-</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-05T19:30:19Z</span></div></footer>
+</div><footer><div>Rendered from <span class="path">UNNAMED</span></div><div>at <span class="time">2024-01-05T19:36:52Z</span></div></footer>
 	</body>
 </html>
 

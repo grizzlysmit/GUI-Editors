@@ -91,7 +91,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-0.1.11
+0.1.12
 
 TITLE
 =====
@@ -623,7 +623,7 @@ Backup the editors file.
 sub backup-editors(Bool:D $use-windows-formatting --> Bool) is export
 ```
 
-**NB: if $use-windows-formatting is true or the program is running on windows then B<<`.`** will become **`·`**> and **`:`** will become **`.`**, this is to avoid problems with the special meaning of **`:`** on windows.
+**NB: if $use-windows-formatting is true or the program is running on windows then `.` will become `·` and `:` will become `.`, this is to avoid problems with the special meaning of `:` on windows.**
 
 [Top of Document](#table-of-contents)
 

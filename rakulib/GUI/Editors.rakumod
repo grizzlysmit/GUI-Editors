@@ -1,4 +1,4 @@
-unit module GUI::Editors:ver<0.1.11>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
+unit module GUI::Editors:ver<0.1.12>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
 
 =begin pod
 
@@ -50,7 +50,7 @@ Table of Contents
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.11
+=VERSION 0.1.12
 =TITLE GUI::Editors
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
@@ -1533,9 +1533,9 @@ sub backup-editors(Bool:D $use-windows-formatting --> Bool) is export
 
 =end code
 
-B<NB: if $use-windows-formatting is true or the program is running on windows then
-B<<C<.>> will become B<C<·>>> and B<C<:>> will become B<C<.>>, this is to avoid
-problems with the special meaning of B<C<:>> on windows.
+B«NB: if $use-windows-formatting is true or the program is running on windows then
+C<.> will become C<·> and C<:> will become C<.>, this is to avoid
+problems with the special meaning of C<:> on windows.»
 
 =end pod
 
