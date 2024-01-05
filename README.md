@@ -66,9 +66,7 @@ Table of Contents
 
     * [add-gui-editor(…)](#add-gui-editor)
 
-    * [set-override-GUI_EDITOR(…)](#set-override-gui_editor)
-
-      * [set-override-GUI_EDITOR(…)](#set-override-gui-editor-1)
+    * [set-override-GUI_EDITOR(…)](#set-override-gui_editor) or [on raku.land set-override-GUI_EDITOR(…)](#set-override-gui-editor)
 
     * [backup-editors(…)](#backup-editors)
 

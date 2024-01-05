@@ -41,8 +41,7 @@ Table of Contents
 =item2 L<BadEditor|#badeditor>
 =item2 L<set-editor|#set-editor>
 =item2 L<add-gui-editor(…)|#add-gui-editor>
-=item2 L<set-override-GUI_EDITOR(…)|#set-override-gui_editor>
-=item3 L<set-override-GUI_EDITOR(…)|#set-override-gui-editor-1>
+=item2 L<set-override-GUI_EDITOR(…)|#set-override-gui_editor> or L<on raku.land set-override-GUI_EDITOR(…)|#set-override-gui-editor>
 =item2 L<backup-editors(…)|#backup-editors>
 =item2 L<restore-editors(…)|#restore-editors>
 =item2 L<list-editors-backups(…)|#list-editors-backups>
