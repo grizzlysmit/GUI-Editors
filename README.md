@@ -32,6 +32,8 @@ Table of Contents
 
     * [$GUI_EDITOR](#gui_editor)
 
+      * [$GUI_EDITOR](#gui-editor)
+
     * [$VISUAL](#visual)
 
     * [$EDITOR](#editor)
@@ -44,7 +46,11 @@ Table of Contents
 
     * [@override-gui_editor](#override-gui_editor)
 
+      * [@override-gui_editor](#override-gui-editor)
+
     * [$override-GUI_EDITOR](#override-gui_editor-1)
+
+      * [$override-GUI_EDITOR](#override-gui-editor-1)
 
       * [In **`init-gui-editors`**](#in-init-gui-editors)
 
@@ -65,6 +71,8 @@ Table of Contents
     * [add-gui-editor(…)](#add-gui-editor)
 
     * [set-override-GUI_EDITOR(…)](#set-override-gui_editor)
+
+      * [set-override-GUI_EDITOR(…)](#set-override-gui-editor-1)
 
     * [backup-editors(…)](#backup-editors)
 
@@ -89,7 +97,7 @@ Francis Grizzly Smit (grizzly@smit.id.au)
 VERSION
 =======
 
-0.1.8
+0.1.9
 
 TITLE
 =====
