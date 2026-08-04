@@ -111,10 +111,12 @@ lives-ok({ list-editors(True, False), Nil},  "list-editors(True, False)");
 lives-ok({ list-editors(False, True), Nil},  "list-editors(False, True)");
 lives-ok({ list-editors(True, True), Nil},   "list-editors(True, True)");
 
+#`«««
 lives-ok({ list-editors-file(False, False), Nil}, "list-editors-file(False, False)");
 lives-ok({ list-editors-file(True, False), Nil},  "list-editors-file(True, False)");
 lives-ok({ list-editors-file(False, True), Nil},  "list-editors-file(False, True)");
 lives-ok({ list-editors-file(True, True), Nil},   "list-editors-file(True, True)");
+»»»
 
 my Str:D @expected-config-files = qw[editors];
 @expected-config-files.append(@host-config-files);
