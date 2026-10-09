@@ -1,4 +1,4 @@
-unit module GUI::Editors:ver<0.1.18>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
+unit module GUI::Editors:ver<0.1.19>:auth<Francis Grizzly Smit (grizzly@smit.id.au)>;
 
 =begin pod
 
@@ -50,7 +50,7 @@ Table of Contents
 
 =NAME GUI::Editors 
 =AUTHOR Francis Grizzly Smit (grizzly@smit.id.au)
-=VERSION 0.1.18
+=VERSION 0.1.19
 =TITLE GUI::Editors
 =SUBTITLE A Raku module for managing the users GUI Editor preferences in a variety of programs.
 
@@ -90,7 +90,20 @@ use Gzz::Text::Utils;
 use Syntax::Highlighters;
 
 # the home dir #
-constant $home = %*ENV<HOME>.Str();
+
+sub init-home(){
+    if $*DISTRO.is-win {
+        return $*HOME;
+    } else {
+        if $*PID == 0 {
+            return '/etc/gui-editors';
+        } else {
+            return $*HOME.Str;
+        }
+    }
+}
+
+constant $home = init-home();
 
 =begin pod
 
@@ -115,7 +128,20 @@ L<Top of Document|#table-of-contents>
 =end pod
 
 # config files
-constant $editor-config is export = "$home/.local/share/gui-editors";
+
+sub init-configs(){
+    if $*DISTRO.is-win {
+        return "$home/Documents/gui-editors";
+    } else {
+        if $*PID == 0 {
+            return $home;
+        } else {
+            return "$home/.local/share/gui-editors";
+        }
+    }
+}
+
+constant $editor-config is export = init-configs();
 
 if $editor-config.IO !~~ :d {
     $editor-config.IO.mkdir();
