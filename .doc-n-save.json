@@ -1,0 +1,15 @@
+{
+    "bin": "bin",
+    "docs": "docs",
+    "name": "GUI::Editors",
+    "markdown-path": "README.md",
+    "exts": [
+        "rakumod"
+    ],
+    "additional-pod-files": [
+    ],
+    "lib": "rakulib",
+    "comment": "A Raku module for managing the users GUI Editor preferences in a variety of programs.",
+    "separate-markdown-files": false,
+    "only-app": false
+}
